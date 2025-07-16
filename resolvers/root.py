@@ -10,5 +10,3 @@ class Query(ClientQuery):
 @strawberry.type
 class Mutation(ClientMutation):
     pass
-
-schema = strawberry.Schema(query=Query, mutation=Mutation)

@@ -1,13 +1,11 @@
 # server/main.py
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
-import strawberry
-from strawberry.fastapi import GraphQLRouter
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import FastAPI
 
-from .database import engine, get_db
+from .database import engine
 from .models import Base
-from .resolvers import schema
+
+from .graphql import graphql_app
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,11 +20,4 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-async def get_context(db: AsyncSession = Depends(get_db)) -> dict:
-    """
-    Strawberry context getter: injects an AsyncSession as `context['db']`.
-    """
-    return {"db": db}
-
-graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
 app.include_router(graphql_app, prefix="/graphql")
