@@ -19,8 +19,7 @@ class BotRecipe(BaseRepr):
     item_id:     Mapped[int] = mapped_column(ForeignKey("item_types.id"))
     amount:      Mapped[int] = mapped_column(Integer)
 
-    bot_type:  Mapped["BotType"]  = relationship("BotType",  back_populates="bot_recipes")
-    item_type: Mapped["ItemType"] = relationship("ItemType", back_populates="bot_recipes")
+    item_type: Mapped["ItemType"] = relationship("ItemType")
 
 
 class BotType(BaseRepr):
@@ -33,8 +32,7 @@ class BotType(BaseRepr):
     speed:    Mapped[int] = mapped_column(Integer)
     vision:   Mapped[int] = mapped_column(Integer)
 
-    bot_recipes: Mapped[list["BotRecipe"]] = relationship("BotRecipe", back_populates="bot_type")
-    bots:        Mapped[list["Bot"]]       = relationship("Bot",       back_populates="type")
+    bot_recipes: Mapped[list["BotRecipe"]] = relationship("BotRecipe")
 
 
 class BotInventorySlot(BaseRepr):
@@ -45,7 +43,6 @@ class BotInventorySlot(BaseRepr):
     item_id: Mapped[int | None] = mapped_column(ForeignKey("item_types.id"), nullable=True)
     item_durability: Mapped[int | None] = mapped_column(Integer, nullable=True, default=None)
 
-    bot: Mapped["Bot"] = relationship("Bot", back_populates="inventory")
     item: Mapped["ItemType"] = relationship("ItemType")
 
     __table_args__ = (
