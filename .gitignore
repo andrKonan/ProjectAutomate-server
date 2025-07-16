@@ -3,7 +3,7 @@
 venv/
 
 # Game database
-game.db
+*.db
 
 # Byte-compiled / optimized / DLLs
 __pycache__/
