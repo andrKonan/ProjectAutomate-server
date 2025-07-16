@@ -1,0 +1,33 @@
+# Virtual environment directories
+.venv/
+venv/
+
+# Byte-compiled / optimized / DLLs
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PEP 582; __pypackages__ directory
+__pypackages__/
+
+# Env files
+.env
+.env.*
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
