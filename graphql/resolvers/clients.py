@@ -4,9 +4,9 @@ from typing import Sequence
 import strawberry
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..services import ClientService
-from ..schemas.clients import ClientType, ClientInput
-from .permissions import IsAuthenticated, IsClientOwner
+from server.graphql.services import ClientService
+from server.graphql.schemas.clients import ClientType, ClientInput
+from server.graphql.permissions import IsAuthenticated, IsClientOwner
 
 @strawberry.type
 class ClientQuery:

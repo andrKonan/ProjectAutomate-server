@@ -4,9 +4,9 @@ import strawberry
 from strawberry.fastapi import GraphQLRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .database import get_db
-from .resolvers import Query, Mutation
-from .services import ClientService 
+from server.database import get_db
+from server.graphql.resolvers import Query, Mutation
+from server.graphql.services import ClientService 
 
 async def get_context(
     request: Request,

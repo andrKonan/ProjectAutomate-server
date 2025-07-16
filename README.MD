@@ -67,8 +67,8 @@ server/
 
 1. **Clone the repo**  
 ```bash
-git clone https://github.com/andrKonan/ProjectAutomate-server.git
-cd ProjectAutomate-server
+git clone https://github.com/andrKonan/ProjectAutomate-server.git ProjectAutomate/server
+cd ProjectAutomate/server
 ```
 
 2. **Create & activate virtualenv**

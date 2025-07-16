@@ -2,10 +2,10 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from .database import engine
-from .models import Base
+from server.database import engine
+from server.models import Base
 
-from .graphql import graphql_app
+from server.graphql import graphql_app
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

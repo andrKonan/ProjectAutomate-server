@@ -1,7 +1,7 @@
 # server/schema/root.py
 import strawberry
 
-from .clients import ClientQuery, ClientMutation
+from server.graphql.resolvers.clients import ClientQuery, ClientMutation
 
 @strawberry.type
 class Query(ClientQuery):

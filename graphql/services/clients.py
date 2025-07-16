@@ -6,8 +6,8 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import Client as ClientModel
-from ..schemas.clients import ClientInput
+from server.models import Client as ClientModel
+from server.graphql.schemas.clients import ClientInput
 
 class ClientService:
     @staticmethod
