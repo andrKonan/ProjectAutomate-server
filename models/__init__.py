@@ -1,10 +1,14 @@
 # server/models/__init__.py
-from models.base import BaseRepr
-from models.clients import Client
-from models.items import ItemType
+from .base import Base, BaseRepr
+from .clients import Client
+from .items import ItemType
+from .buildings import BuildingRecipe, BuildingType, Building
+from .recipes import RecipeIngredient, Recipe
 
 __all__ = [
-    "BaseRepr",
+    "Base", "BaseRepr",
     "Client",
-    "ItemType"
+    "ItemType",
+    "BuildingRecipe", "BuildingType", "Building",
+    "RecipeIngredient", "Recipe"
 ]

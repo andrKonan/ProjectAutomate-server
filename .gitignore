@@ -2,6 +2,9 @@
 .venv/
 venv/
 
+# Game database
+game.db
+
 # Byte-compiled / optimized / DLLs
 __pycache__/
 *.py[cod]
