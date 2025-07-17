@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime, timezone
 from enum import Enum
 
-from sqlalchemy import Integer, DateTime
+from sqlalchemy import DateTime
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 from sqlalchemy_utils import UUIDType
 

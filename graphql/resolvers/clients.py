@@ -1,6 +1,4 @@
 # server/resolvers/clients.py
-from typing import Sequence
-
 import strawberry
 from sqlalchemy.ext.asyncio import AsyncSession
 

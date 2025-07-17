@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import BaseRepr
 
