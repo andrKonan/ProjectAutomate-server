@@ -14,7 +14,7 @@ Base = declarative_base()
 class BaseRepr(Base):
     """Colourful `repr()` that skips SQLAlchemy internals."""
     __abstract__ = True
-    id: Mapped[int] = mapped_column(
+    id: Mapped[uuid.UUID] = mapped_column(
         UUIDType(binary=True), 
         primary_key=True, 
         default=uuid.uuid4

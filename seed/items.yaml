@@ -1,7 +1,7 @@
 # server/seed/items.yaml
 version: 1
 items:
-  - name: "Wooden Log"
+  - name: "Wooden log"
     durability: null
   - name: "Wooden plank"
     durability: null
@@ -9,3 +9,7 @@ items:
     durability: 10
   - name: "Stone"
     durability: 20
+  - name: "Iron ore"
+    durability: null
+  - name: "Coal ore"
+    durability: null

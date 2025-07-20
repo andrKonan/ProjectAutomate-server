@@ -8,7 +8,7 @@ from server.database import engine
 from server.database.models import Base
 
 from server.graphql import graphql_app
-from server.workers.seed import seed_item_types
+from server.workers.seed import run_all_seeds
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,8 +17,9 @@ async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    seed_file = Path("server/seed/items.yaml")
-    await seed_item_types(seed_file)
+    seed_file = Path(__file__).parent / "seed"
+
+    await run_all_seeds(seed_file)
 
     yield
 

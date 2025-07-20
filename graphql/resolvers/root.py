@@ -1,19 +1,18 @@
 # server/schema/root.py
 import strawberry
 
-from server.graphql.resolvers.clients import ClientQuery, ClientMutation
-from server.graphql.resolvers.items import ItemTypeQuery, ItemTypeMutation
+from .clients import ClientQuery, ClientMutation
+from .items import ItemTypeQuery, ItemTypeMutation
+from .structures import StructureTypeQuery, StructureTypeMutation
 
 @strawberry.type
-class Query(
-        ClientQuery, 
-        ItemTypeQuery
-    ):
-    pass
+class Query():
+    client: ClientQuery = strawberry.field(resolver=ClientQuery)
+    item_type: ItemTypeQuery = strawberry.field(resolver=ItemTypeQuery)
+    structure_type: StructureTypeQuery = strawberry.field(resolver=StructureTypeQuery)
 
 @strawberry.type
-class Mutation(
-        ClientMutation, 
-        ItemTypeMutation
-    ):
-    pass
+class Mutation():
+    client: ClientMutation = strawberry.mutation(resolver=ClientMutation)
+    item_type: ItemTypeMutation = strawberry.mutation(resolver=ItemTypeMutation)
+    structure_type: StructureTypeMutation = strawberry.mutation(resolver=StructureTypeMutation)

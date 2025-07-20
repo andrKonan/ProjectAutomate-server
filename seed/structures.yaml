@@ -1,0 +1,26 @@
+# server/seed/structures.yaml
+version: 1
+structures:
+  - name: "Tree"
+    health: 100
+    item_type: "Wooden Log"        # FK will be resolved by name
+    max_items: 5
+    item_to_engage: null
+
+  - name: "Boulder"
+    health: 200
+    item_type: "Stone"
+    max_items: 12
+    item_to_engage: null
+
+  - name: "Iron Ore Patch"
+    health: 250
+    item_type: "Iron Ore"
+    max_items: 100
+    item_to_engage: null
+
+  - name: "Coal Ore Patch"
+    health: 250
+    item_type: "Coal Ore"
+    max_items: 200
+    item_to_engage: null

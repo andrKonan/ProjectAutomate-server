@@ -1,5 +1,5 @@
 # server/database/services/items.py
-from typing import Sequence
+from typing import Sequence, Optional
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -8,15 +8,20 @@ from sqlalchemy.exc import IntegrityError
 import strawberry
 
 from server.database.models import ItemType as ItemTypeModel
-from server.graphql.schemas.items import ItemTypeInput
+from server.graphql.schemas import ItemTypeInput
 
 class ItemTypeService:
     @staticmethod
-    async def get_by_id(db: AsyncSession, client_id: str) -> ItemTypeModel:
-        client = await db.get(ItemTypeModel, client_id)
-        if not client:
+    async def get_by_id(db: AsyncSession, itemtype_id: str) -> ItemTypeModel:
+        itemtype = await db.get(ItemTypeModel, itemtype_id)
+        if not itemtype:
             raise HTTPException(status_code=404, detail="ItemType not found")
-        return client
+        return itemtype
+    
+    @staticmethod
+    async def get_by_name(db: AsyncSession, itemtype_name: str) -> Optional[ItemTypeModel]:
+        stmt = select(ItemTypeModel).where(ItemTypeModel.name == itemtype_name)
+        return (await db.execute(stmt)).scalar_one_or_none()
 
     @staticmethod
     async def list_all(db: AsyncSession) -> Sequence[ItemTypeModel]:
@@ -42,13 +47,7 @@ class ItemTypeService:
         if data.durability is not strawberry.UNSET:        # sent (may be None)
             itemtype.durability = data.durability
 
-        try:
-            await db.commit()
-        except IntegrityError as exc:
-            await db.rollback()
-            raise HTTPException(
-                409, "Another ItemType with that name already exists"
-            ) from exc
+        await db.commit()
         
         await db.refresh(itemtype)
         return itemtype
@@ -61,11 +60,10 @@ class ItemTypeService:
         return True
     
     @staticmethod
-    async def upsert_from_dict(db: AsyncSession, data: dict) -> ItemTypeModel:
-        """
-        Insert the row if it doesn't exist, otherwise do nothing.
-        Works on both SQLite and Postgres.
-        """
+    async def upsert_from_dict(db: AsyncSession, data: dict) -> Optional[ItemTypeModel]:
+        if await ItemTypeService.get_by_name(db, data.get("name", "")) is not None:
+            return None
+        
         instance = ItemTypeModel(**data)
         db.add(instance)
         await db.commit()

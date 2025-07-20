@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.models import Client as ClientModel
-from server.graphql.schemas.clients import ClientInput
+from server.graphql.schemas import ClientInput
 
 class ClientService:
     @staticmethod

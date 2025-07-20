@@ -1,4 +1,7 @@
 # server/database/models/structures.py
+import uuid
+
+from sqlalchemy_utils import UUIDType
 from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -11,11 +14,19 @@ if TYPE_CHECKING:
 class StructureType(BaseRepr):
     __tablename__ = "structure_types"
 
-    name: Mapped[str] = mapped_column(String)
+    name: Mapped[str] = mapped_column(String, unique=True)
     health: Mapped[int] = mapped_column(Integer)
-    item_type_id: Mapped[int] = mapped_column(ForeignKey("item_types.id"))
+    item_type_id: Mapped[uuid.UUID] = mapped_column(
+        UUIDType(binary=True),
+        ForeignKey("item_types.id"),
+        nullable=False,
+    )
     max_items: Mapped[int] = mapped_column(Integer)
-    item_to_engage_id: Mapped[int] = mapped_column(ForeignKey("item_types.id"), nullable=True)
+    item_to_engage_id: Mapped[uuid.UUID] = mapped_column(
+        UUIDType(binary=True),
+        ForeignKey("item_types.id"), 
+        nullable=True
+    )
 
     # Specify which FK to use for each relationship
     item_type: Mapped["ItemType"] = relationship(
@@ -30,7 +41,10 @@ class StructureType(BaseRepr):
 class Structure(BaseRepr):
     __tablename__ = "structures"
 
-    type_id: Mapped[int] = mapped_column(ForeignKey("structure_types.id"))
+    type_id: Mapped[uuid.UUID] = mapped_column(
+        UUIDType(binary=True),
+        ForeignKey("structure_types.id")
+    )
     items: Mapped[int] = mapped_column(Integer, default=0)
     x: Mapped[int] = mapped_column(Integer)
     y: Mapped[int] = mapped_column(Integer)

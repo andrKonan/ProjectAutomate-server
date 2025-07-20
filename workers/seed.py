@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from server.database import get_db, engine
-from server.database.services.items import ItemTypeService
+from server.database.services import ItemTypeService, StructureTypeService
 
 from server.database.models import Base, SeedMeta
 
@@ -70,3 +70,40 @@ async def seed_item_types(file: pathlib.Path) -> None:
         await _mark_applied(db, sha, file)
         await db.commit()
         print(f"✅ Seeded {len(items)} item types (hash {sha[:7]})")
+
+async def seed_structure_types(file: pathlib.Path) -> None:
+    sha = _file_sha256(file)
+
+    async for db in get_db():
+        if await _already_applied(db, sha):
+            print(f"✔ StructureType seed already applied: {sha[:7]}")
+            return
+
+        payload = yaml.safe_load(file.read_text())
+        structs = payload.get("structures", [])
+
+        for raw in structs:
+            item_type_name = raw.pop("item_type")
+            item_type_row = await ItemTypeService.get_by_name(db, item_type_name)
+            if item_type_row is None:
+                raise RuntimeError(f'ItemType "{item_type_name}" not found')
+            raw["item_type_id"] = item_type_row.id
+
+            engage_name = raw.pop("item_to_engage", None)
+            if engage_name:
+                engage_row = await ItemTypeService.get_by_name(db, engage_name)
+                if engage_row is None:
+                    raise RuntimeError(f'ItemType "{engage_name}" not found')
+                raw["item_to_engage_id"] = engage_row.id
+            else:
+                raw["item_to_engage_id"] = None
+
+            await StructureTypeService.upsert_from_dict(db, raw)
+
+        await _mark_applied(db, sha, file)
+        await db.commit()
+        print(f"✅ Seeded {len(structs)} structure types (hash {sha[:7]})")
+
+async def run_all_seeds(seed_dir: pathlib.Path) -> None:
+    await seed_item_types(seed_dir / "items.yaml")
+    await seed_structure_types(seed_dir / "structures.yaml")
