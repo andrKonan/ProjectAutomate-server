@@ -74,8 +74,8 @@ server/
 
 1. Clone repository
 ```bash
-git clone https://github.com/your-username/ProjectAutomate-server.git  
-cd ProjectAutomate-server
+git clone https://github.com/your-username/ProjectAutomate-server.git server
+cd server
 ```
 
 2. Create & activate virtual environment

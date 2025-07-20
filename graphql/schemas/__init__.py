@@ -1,6 +1,8 @@
 # server/schemas/__init__.py
-from .clients import ClientType, ClientInput
+from .clients import ClientScheme, ClientInput
+from .items import ItemTypeScheme, ItemTypeInput
 
 __all__ = [
-    "ClientType", "ClientInput"
+    "ClientScheme", "ClientInput",
+    "ItemTypeScheme", "ItemTypeInput"
 ]

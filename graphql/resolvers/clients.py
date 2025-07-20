@@ -3,7 +3,7 @@ import strawberry
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.graphql.services import ClientService
-from server.graphql.schemas.clients import ClientType, ClientInput
+from server.graphql.schemas.clients import ClientScheme, ClientInput
 from server.graphql.permissions import IsAuthenticated, IsClientOwner
 
 @strawberry.type
@@ -12,7 +12,7 @@ class ClientQuery:
         description="Fetch a single client by its ID",
         permission_classes=[IsAuthenticated, IsClientOwner]
     )
-    async def client(self, info, id: strawberry.ID) -> ClientType:
+    async def client(self, info, id: strawberry.ID) -> ClientScheme:
         db: AsyncSession = info.context["db"]
         return await ClientService.get_by_id(db, id)
 
@@ -21,7 +21,7 @@ class ClientMutation:
     @strawberry.mutation(description="Create a new client",)
     async def create_client(
         self, info, input: ClientInput
-    ) -> ClientType:
+    ) -> ClientScheme:
         db: AsyncSession = info.context["db"]
         return await ClientService.create(db, input)
 
@@ -31,7 +31,7 @@ class ClientMutation:
     )
     async def update_client(
         self, info, id: strawberry.ID, input: ClientInput
-    ) -> ClientType:
+    ) -> ClientScheme:
         db: AsyncSession = info.context["db"]
         return await ClientService.update(db, id, input)
 

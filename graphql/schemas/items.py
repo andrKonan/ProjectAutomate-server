@@ -1,15 +1,16 @@
-# server/schema/clients.py
+# server/schema/items.py
 from datetime import datetime
 
 import strawberry
 
 @strawberry.type(description="A customer/client in the system")
-class ClientScheme:
+class ItemTypeScheme:
     id: strawberry.ID
     name: str
-    _token: str
+    durability: int | None
     created_at: datetime
 
 @strawberry.input(description="Payload for creating/updating a Client")
-class ClientInput:
+class ItemTypeInput:
     name: str
+    durability: int | None
