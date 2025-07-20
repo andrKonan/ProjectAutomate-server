@@ -6,6 +6,7 @@ from .buildings import BuildingRecipe, BuildingType, Building
 from .recipes import RecipeIngredient, Recipe
 from .structures import StructureType, Structure
 from .bots import BotRecipe, BotType, BotInventorySlot, Bot
+from .seed import SeedMeta
 
 __all__ = [
     "Base", "BaseRepr",
@@ -14,5 +15,6 @@ __all__ = [
     "BuildingRecipe", "BuildingType", "Building",
     "RecipeIngredient", "Recipe",
     "StructureType", "Structure",
-    "BotRecipe", "BotType", "BotInventorySlot", "Bot"
+    "BotRecipe", "BotType", "BotInventorySlot", "Bot",
+    "SeedMeta"
 ]
