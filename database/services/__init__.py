@@ -1,4 +1,4 @@
-# server/services/__init__.py
+# server/database/services/__init__.py
 from .clients import ClientService
 from .items import ItemTypeService
 

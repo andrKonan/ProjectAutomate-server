@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from server.database import engine
-from server.models import Base
+from server.database.models import Base
 
 from server.graphql import graphql_app
 from server.workers.seed import seed_item_types

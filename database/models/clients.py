@@ -1,4 +1,4 @@
-# server/models/clients.py
+# server/database/models/clients.py
 from __future__ import annotations
 
 from sqlalchemy import String

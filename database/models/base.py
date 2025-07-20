@@ -1,4 +1,4 @@
-# server/models/base.py
+# server/database/models/base.py
 from __future__ import annotations
 
 import uuid

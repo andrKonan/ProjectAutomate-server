@@ -10,9 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from server.database import get_db, engine
-from server.graphql.services.items import ItemTypeService
+from server.database.services.items import ItemTypeService
 
-from server.models import Base, SeedMeta
+from server.database.models import Base, SeedMeta
 
 async def _ensure_seed_meta_table() -> None:
     """

@@ -2,7 +2,7 @@
 import strawberry
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.graphql.services import ClientService
+from server.database.services import ClientService
 from server.graphql.schemas.clients import ClientScheme, ClientInput
 from server.graphql.permissions import IsAuthenticated, IsClientOwner
 

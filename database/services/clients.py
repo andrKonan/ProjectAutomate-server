@@ -1,4 +1,4 @@
-# server/services/clients.py
+# server/database/services/clients.py
 import secrets
 from typing import Sequence
 
@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.models import Client as ClientModel
+from server.database.models import Client as ClientModel
 from server.graphql.schemas.clients import ClientInput
 
 class ClientService:

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database import get_db
 from server.graphql.resolvers import Query, Mutation
-from server.graphql.services import ClientService 
+from server.database.services import ClientService 
 
 async def get_context(
     request: Request,

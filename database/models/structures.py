@@ -1,4 +1,4 @@
-# server/models/structures.py
+# server/database/models/structures.py
 from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

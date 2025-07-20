@@ -1,4 +1,4 @@
-# server/models/bots.py
+# server/database/models/bots.py
 from __future__ import annotations
 
 from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint

@@ -1,4 +1,4 @@
-# server/models/buildings.py
+# server/database/models/buildings.py
 from __future__ import annotations
 
 from sqlalchemy import Integer, String, ForeignKey

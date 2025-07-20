@@ -1,5 +1,4 @@
-# server/services/items.py
-import secrets
+# server/database/services/items.py
 from typing import Sequence
 
 from fastapi import HTTPException
@@ -8,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 import strawberry
 
-from server.models import ItemType as ItemTypeModel
+from server.database.models import ItemType as ItemTypeModel
 from server.graphql.schemas.items import ItemTypeInput
 
 class ItemTypeService:

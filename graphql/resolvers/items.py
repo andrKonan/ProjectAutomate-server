@@ -4,7 +4,7 @@ from typing import Sequence
 import strawberry
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.graphql.services import ItemTypeService
+from server.database.services import ItemTypeService
 from server.graphql.schemas.items import ItemTypeScheme, ItemTypeInput
 from server.graphql.permissions import IsAuthenticated
 
