@@ -38,5 +38,5 @@ class BotTypeInput:
     strength: int
     speed: int
     vision: int
-    recipes: list[BotRecipeScheme] | None = None
+    recipes: list[BotRecipeInput] | None = None
 
