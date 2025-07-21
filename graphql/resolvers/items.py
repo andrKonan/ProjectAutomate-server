@@ -1,4 +1,4 @@
-# server/resolvers/items.py
+# server/graphql/resolvers/items.py
 from typing import Sequence
 
 import strawberry

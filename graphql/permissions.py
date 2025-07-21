@@ -1,4 +1,4 @@
-# server/utils/permissions.py
+# server/graphql/permissions.py
 from typing import Any
 from strawberry.permission import BasePermission
 from strawberry.types import Info

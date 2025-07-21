@@ -16,7 +16,7 @@ class BotRecipe(BaseRepr):
     __tablename__ = "bot_recipes"
 
     bot_type_id: Mapped[int] = mapped_column(ForeignKey("bot_types.id"))
-    item_id:     Mapped[int] = mapped_column(ForeignKey("item_types.id"))
+    item_type_id:     Mapped[int] = mapped_column(ForeignKey("item_types.id"))
     amount:      Mapped[int] = mapped_column(Integer)
 
     item_type: Mapped["ItemType"] = relationship("ItemType")

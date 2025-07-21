@@ -1,4 +1,4 @@
-# server/schema/root.py
+# server/graphql/schema/root.py
 import strawberry
 
 from .clients import ClientQuery, ClientMutation

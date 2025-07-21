@@ -1,4 +1,4 @@
-# server/resolvers/clients.py
+# server/graphql/resolvers/clients.py
 import strawberry
 from sqlalchemy.ext.asyncio import AsyncSession
 

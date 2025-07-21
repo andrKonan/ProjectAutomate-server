@@ -4,7 +4,6 @@ from typing import Sequence, Optional
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 import strawberry
 
 from server.database.models import StructureType as StructureTypeModel

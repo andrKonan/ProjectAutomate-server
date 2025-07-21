@@ -1,4 +1,4 @@
-# server/graphql.py
+# server/graphql/graphql.py
 from fastapi import Request, Depends
 import strawberry
 from strawberry.fastapi import GraphQLRouter
