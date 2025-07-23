@@ -8,11 +8,12 @@ import strawberry
 
 from server.database.models import StructureType as StructureTypeModel
 from server.graphql.schemas import StructureTypeInput
+from server.graphql.scalars import UUID
 
 class StructureTypeService:
     @staticmethod
-    async def get_by_id(db: AsyncSession, structuretype_id: str) -> StructureTypeModel:
-        structuretype = await db.get(StructureTypeModel, structuretype_id)
+    async def get_by_id(db: AsyncSession, structure_type_id: UUID) -> StructureTypeModel:
+        structuretype = await db.get(StructureTypeModel, structure_type_id)
         if not structuretype:
             raise HTTPException(status_code=404, detail="StructureType not found")
         return structuretype
@@ -43,9 +44,9 @@ class StructureTypeService:
     
     @staticmethod
     async def update(
-        db: AsyncSession, structuretype_id: str, data: StructureTypeInput
+        db: AsyncSession, structure_type_id: UUID, data: StructureTypeInput
     ) -> StructureTypeModel:
-        structuretype = await StructureTypeService.get_by_id(db, structuretype_id)
+        structuretype = await StructureTypeService.get_by_id(db, structure_type_id)
 
         if data.name is not strawberry.UNSET and data.name is not None: 
             structuretype.name = data.name
@@ -68,8 +69,8 @@ class StructureTypeService:
         return structuretype
 
     @staticmethod
-    async def delete(db: AsyncSession, structuretype_id: str) -> bool:
-        structuretype = await StructureTypeService.get_by_id(db, structuretype_id)
+    async def delete(db: AsyncSession, structure_type_id: UUID) -> bool:
+        structuretype = await StructureTypeService.get_by_id(db, structure_type_id)
         await db.delete(structuretype)
         await db.commit()
         return True

@@ -4,7 +4,7 @@ from strawberry.permission import BasePermission
 from strawberry.types import Info
 
 class IsAuthenticated(BasePermission):
-    message = "Authentication required"
+    message = "Authorization required"
 
     def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
         # simply block if there's no current_client in our context

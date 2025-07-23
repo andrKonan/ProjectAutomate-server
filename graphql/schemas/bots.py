@@ -28,7 +28,7 @@ class BotTypeScheme:
     strength: int
     speed: int
     vision: int
-    recipes: list[BotRecipeScheme]
+    bot_recipes: list[BotRecipeScheme]
     created_at: datetime
 
 @strawberry.input(description="Payload for creating/updating a BotType")
@@ -38,5 +38,5 @@ class BotTypeInput:
     strength: int
     speed: int
     vision: int
-    recipes: list[BotRecipeInput] | None = None
+    bot_recipes: list[BotRecipeInput] | None = None
 

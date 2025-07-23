@@ -21,6 +21,8 @@ async def lifespan(app: FastAPI):
 
     await run_all_seeds(seed_file)
 
+    print("✅ GraphiQL available at http://127.0.0.1:8000/graphql")
+
     yield
 
     print("Game server is shutting down")

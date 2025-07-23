@@ -8,10 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.models import Client as ClientModel
 from server.graphql.schemas import ClientInput
+from server.graphql.scalars import UUID
 
 class ClientService:
     @staticmethod
-    async def get_by_id(db: AsyncSession, client_id: str) -> ClientModel:
+    async def get_by_id(db: AsyncSession, client_id: UUID) -> ClientModel:
         client = await db.get(ClientModel, client_id)
         if not client:
             raise HTTPException(status_code=404, detail="Client not found")
@@ -42,14 +43,14 @@ class ClientService:
 
     @staticmethod
     async def update(
-        db: AsyncSession, client_id: str, data: ClientInput
+        db: AsyncSession, client_id: UUID, data: ClientInput
     ) -> ClientModel:
         # Client can't be updated
         client = await ClientService.get_by_id(db, client_id)
         return client
 
     @staticmethod
-    async def delete(db: AsyncSession, client_id: str) -> bool:
+    async def delete(db: AsyncSession, client_id: UUID) -> bool:
         client = await ClientService.get_by_id(db, client_id)
         await db.delete(client)
         await db.commit()

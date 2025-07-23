@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from server.database import get_db, engine
-from server.database.services import ItemTypeService, StructureTypeService
+from server.database.services import ItemTypeService, StructureTypeService, BotTypeService, BotRecipeService
 
 from server.database.models import Base, SeedMeta
 
@@ -69,7 +69,8 @@ async def seed_item_types(file: pathlib.Path) -> None:
 
         await _mark_applied(db, sha, file)
         await db.commit()
-        print(f"✅ Seeded {len(items)} item types (hash {sha[:7]})")
+        print(f"✔ Seeded {len(items)} item types (hash {sha[:7]})")
+
 
 async def seed_structure_types(file: pathlib.Path) -> None:
     sha = _file_sha256(file)
@@ -102,8 +103,62 @@ async def seed_structure_types(file: pathlib.Path) -> None:
 
         await _mark_applied(db, sha, file)
         await db.commit()
-        print(f"✅ Seeded {len(structs)} structure types (hash {sha[:7]})")
+        print(f"✔ Seeded {len(structs)} structure types (hash {sha[:7]})")
+
+
+async def seed_bot_types(file: pathlib.Path) -> None:
+    sha = _file_sha256(file)
+
+    async for db in get_db():
+        if await _already_applied(db, sha):
+            print(f"✔ BotType seed already applied: {sha[:7]}")
+            return
+
+        payload = yaml.safe_load(file.read_text())
+        bots = payload.get("bots", [])
+
+        for raw in bots:
+            # Extract and transform recipe info
+            raw_recipes = raw.pop("recipes", [])
+            recipe_models = []
+
+            for r in raw_recipes:
+                item_type_name = r.get("item_type")
+                item_type = await ItemTypeService.get_by_name(db, item_type_name)
+                if item_type is None:
+                    raise RuntimeError(f'ItemType "{item_type_name}" not found')
+
+                recipe_models.append({
+                    "item_type_id": item_type.id,
+                    "amount": r["amount"],
+                })
+
+            # Create BotType
+            bottype = await BotTypeService.upsert_from_dict(db, {
+                "name": raw["name"],
+                "health": raw["health"],
+                "strength": raw["strength"],
+                "speed": raw["speed"],
+                "vision": raw["vision"],
+            })
+
+            if bottype:
+                for r in recipe_models:
+                    await BotRecipeService.create(
+                        db=db,
+                        bot_type_id=bottype.id,
+                        item_type_id=r["item_type_id"],
+                        amount=r["amount"]
+                    )
+
+        await _mark_applied(db, sha, file)
+        await db.commit()
+        print(f"✔ Seeded {len(bots)} bot types (hash {sha[:7]})")
+
+        
+
 
 async def run_all_seeds(seed_dir: pathlib.Path) -> None:
     await seed_item_types(seed_dir / "items.yaml")
     await seed_structure_types(seed_dir / "structures.yaml")
+    await seed_bot_types(seed_dir / "bots.yaml")

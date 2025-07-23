@@ -1,12 +1,16 @@
 # server/seed/bots.yaml
 version: 1
-bot_types:
+bots:
   - name: "Default Bot"
     health: 100
     strength: 10
     speed: 3
     vision: 5
-    recipes: []
+    recipes:
+      - item_type: "Wooden Stick"
+        amount: 4
+      - item_type: "Stone"
+        amount: 2
 
   - name: "Scout Bot"
     health: 70
@@ -14,7 +18,7 @@ bot_types:
     speed: 6
     vision: 8
     recipes:
-      - item_type: "Wooden Stick"
+      - item_type: "Wooden Plank"
         amount: 4
       - item_type: "Stone"
         amount: 2

@@ -8,11 +8,12 @@ import strawberry
 
 from server.database.models import ItemType as ItemTypeModel
 from server.graphql.schemas import ItemTypeInput
+from server.graphql.scalars import UUID
 
 class ItemTypeService:
     @staticmethod
-    async def get_by_id(db: AsyncSession, itemtype_id: str) -> ItemTypeModel:
-        itemtype = await db.get(ItemTypeModel, itemtype_id)
+    async def get_by_id(db: AsyncSession, item_type_id: UUID) -> ItemTypeModel:
+        itemtype = await db.get(ItemTypeModel, item_type_id)
         if not itemtype:
             raise HTTPException(status_code=404, detail="ItemType not found")
         return itemtype
@@ -37,9 +38,9 @@ class ItemTypeService:
 
     @staticmethod
     async def update(
-        db: AsyncSession, itemtype_id: str, data: ItemTypeInput
+        db: AsyncSession, item_type_id: UUID, data: ItemTypeInput
     ) -> ItemTypeModel:
-        itemtype = await ItemTypeService.get_by_id(db, itemtype_id)
+        itemtype = await ItemTypeService.get_by_id(db, item_type_id)
 
         if data.name is not strawberry.UNSET and data.name is not None: 
             itemtype.name = data.name
@@ -52,8 +53,8 @@ class ItemTypeService:
         return itemtype
 
     @staticmethod
-    async def delete(db: AsyncSession, itemtype_id: str) -> bool:
-        itemtype = await ItemTypeService.get_by_id(db, itemtype_id)
+    async def delete(db: AsyncSession, item_type_id: UUID) -> bool:
+        itemtype = await ItemTypeService.get_by_id(db, item_type_id)
         await db.delete(itemtype)
         await db.commit()
         return True
