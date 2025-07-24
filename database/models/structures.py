@@ -1,5 +1,7 @@
 # server/database/models/structures.py
-import uuid
+from __future__ import annotations
+
+from uuid import UUID
 
 from sqlalchemy_utils import UUIDType
 from sqlalchemy import Integer, String, ForeignKey
@@ -16,13 +18,13 @@ class StructureType(BaseRepr):
 
     name: Mapped[str] = mapped_column(String, unique=True)
     health: Mapped[int] = mapped_column(Integer)
-    item_type_id: Mapped[uuid.UUID] = mapped_column(
+    item_type_id: Mapped[UUID] = mapped_column(
         UUIDType(binary=True),
         ForeignKey("item_types.id"),
         nullable=False,
     )
     max_items: Mapped[int] = mapped_column(Integer)
-    item_to_engage_id: Mapped[uuid.UUID] = mapped_column(
+    item_to_engage_id: Mapped[UUID] = mapped_column(
         UUIDType(binary=True),
         ForeignKey("item_types.id"), 
         nullable=True
@@ -41,7 +43,7 @@ class StructureType(BaseRepr):
 class Structure(BaseRepr):
     __tablename__ = "structures"
 
-    type_id: Mapped[uuid.UUID] = mapped_column(
+    type_id: Mapped[UUID] = mapped_column(
         UUIDType(binary=True),
         ForeignKey("structure_types.id")
     )

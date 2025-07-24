@@ -12,7 +12,4 @@ class ItemTypeScheme:
     durability: int | None
     created_at: datetime
 
-@strawberry.input(description="Payload for creating/updating a ItemType")
-class ItemTypeInput:
-    name: str
-    durability: int | None
+

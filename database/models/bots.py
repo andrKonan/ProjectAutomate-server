@@ -1,6 +1,8 @@
 # server/database/models/bots.py
 from __future__ import annotations
 
+from uuid import UUID
+
 from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -15,7 +17,7 @@ if TYPE_CHECKING:
 class BotRecipe(BaseRepr):
     __tablename__ = "bot_recipes"
 
-    bot_type_id: Mapped[int] = mapped_column(ForeignKey("bot_types.id"))
+    bot_type_id: Mapped[UUID] = mapped_column(ForeignKey("bot_types.id"))
     item_type_id:     Mapped[int] = mapped_column(ForeignKey("item_types.id"))
     amount:      Mapped[int] = mapped_column(Integer)
 
@@ -38,7 +40,7 @@ class BotType(BaseRepr):
 class BotInventorySlot(BaseRepr):
     __tablename__ = "bot_inventory_slots"
 
-    bot_id: Mapped[int] = mapped_column(ForeignKey("bots.id"))
+    bot_id: Mapped[UUID] = mapped_column(ForeignKey("bots.id"))
     slot_index: Mapped[int] = mapped_column(Integer)  # 0-based slot index
     item_id: Mapped[int | None] = mapped_column(ForeignKey("item_types.id"), nullable=True)
     item_durability: Mapped[int | None] = mapped_column(Integer, nullable=True, default=None)
@@ -55,7 +57,7 @@ class Bot(BaseRepr):
 
     name:      Mapped[str] = mapped_column(String, default="Unnamed Bot")
     type_id:   Mapped[int] = mapped_column(ForeignKey("bot_types.id"))
-    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"))
+    client_id: Mapped[UUID] = mapped_column(ForeignKey("clients.id"))
 
     x: Mapped[int] = mapped_column(Integer)
     y: Mapped[int] = mapped_column(Integer)

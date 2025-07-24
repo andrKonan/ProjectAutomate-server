@@ -1,0 +1,1 @@
+# server/graphql/inputs/__init__.py

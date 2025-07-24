@@ -39,4 +39,3 @@ class BotTypeInput:
     speed: int
     vision: int
     bot_recipes: list[BotRecipeInput] | None = None
-

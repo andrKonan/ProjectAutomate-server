@@ -11,7 +11,3 @@ class ClientScheme:
     name: str
     _token: str
     created_at: datetime
-
-@strawberry.input(description="Payload for creating/updating a Client")
-class ClientInput:
-    name: str
