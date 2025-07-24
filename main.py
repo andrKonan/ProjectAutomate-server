@@ -15,7 +15,6 @@ async def lifespan(app: FastAPI):
     print("Game server is starting up")
     
     local_engine = get_engine()
-    print("Tables to be created:", Base.metadata.tables.keys())
     async with local_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 

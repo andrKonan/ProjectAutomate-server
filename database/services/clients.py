@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.models import Client as ClientModel
-from server.graphql.inputs import ClientInput
+from server.graphql.inputs import ClientCreateInput, ClientUpdateInput
 from server.graphql.scalars import UUID
 
 class ClientService:
@@ -33,7 +33,7 @@ class ClientService:
         return result.scalars().all()
 
     @staticmethod
-    async def create(db: AsyncSession, data: ClientInput) -> ClientModel:
+    async def create(db: AsyncSession, data: ClientCreateInput) -> ClientModel:
         token = secrets.token_hex(64)
         client = ClientModel(name=data.name, _token=token)
         db.add(client)
@@ -43,10 +43,16 @@ class ClientService:
 
     @staticmethod
     async def update(
-        db: AsyncSession, client_id: UUID, data: ClientInput
+        db: AsyncSession, data: ClientUpdateInput
     ) -> ClientModel:
-        # Client can't be updated
-        client = await ClientService.get_by_id(db, client_id)
+        client = await ClientService.get_by_id(db, data.id)
+        
+        if client is not None:
+            client.name = data.name
+
+        await db.commit()
+        await db.refresh(client)
+
         return client
 
     @staticmethod

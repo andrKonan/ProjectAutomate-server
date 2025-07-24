@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.services import ClientService
 from server.graphql.schemas import ClientScheme
-from server.graphql.inputs import ClientInput
+from server.graphql.inputs import ClientCreateInput, ClientUpdateInput
 from server.graphql.permissions import IsAuthenticated, IsClientOwner
 
 
@@ -33,13 +33,13 @@ class ClientQuery:
         permission_classes=[IsAuthenticated]
     )
 
-async def create_client(info: Info, input: ClientInput) -> ClientScheme:
+async def create_client(info: Info, input: ClientCreateInput) -> ClientScheme:
     db: AsyncSession = info.context["db"]
     return await ClientService.create(db, input)
 
-async def update_client(info: Info, id: UUID, input: ClientInput) -> ClientScheme:
+async def update_client(info: Info, input: ClientUpdateInput) -> ClientScheme:
     db: AsyncSession = info.context["db"]
-    return await ClientService.update(db, id, input)
+    return await ClientService.update(db, input)
 
 async def delete_client(info: Info, id: UUID) -> bool:
     db: AsyncSession = info.context["db"]

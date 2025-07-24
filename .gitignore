@@ -10,6 +10,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Pytest cache
+.pytest_cache
+
 # PEP 582; __pypackages__ directory
 __pypackages__/
 

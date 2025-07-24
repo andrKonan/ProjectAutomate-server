@@ -7,14 +7,14 @@ class IsAuthenticated(BasePermission):
     message = "Authorization required"
 
     def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
-        # simply block if there's no current_client in our context
         return info.context.get("current_client") is not None
 
 class IsClientOwner(BasePermission):
     message = "You do not have permission to modify this client"
 
     def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
-        # kwargs contains your resolver arguments—so grab the `id` arg
         client = info.context.get("current_client")
-        target_id = kwargs.get("id")
+        input_data = kwargs.get("input")
+        target_id = getattr(input_data, "id", None)
+        print(client.id, target_id)
         return bool(client and str(client.id) == str(target_id))
