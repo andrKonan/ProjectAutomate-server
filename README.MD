@@ -13,12 +13,14 @@ A FastAPI-powered, Strawberry-GraphQL backend for the Resource Bot game. Players
   - [Installation](#installation)  
   - [Configuration](#configuration)  
   - [Running the Server](#running-the-server)  
+  - [Automatic seeding](#automatic-seeding)  
 - [GraphQL API](#graphql-api)  
   - [Endpoint](#endpoint)  
   - [Authentication](#authentication)  
   - [Permissions](#permissions)  
 - [Database](#database)  
 - [Switching to PostgreSQL](#switching-to-postgresql)  
+- [Testing](#testing)  
 - [Contributing](#contributing)  
 - [License](#license)  
 
@@ -39,38 +41,37 @@ A FastAPI-powered, Strawberry-GraphQL backend for the Resource Bot game. Players
 ## Project Structure
 ```
 server/
+├── database/
+│   ├── models/               # SQLAlchemy models (bots, buildings, etc.)
+│   ├── services/             # CRUD logic, database interaction
+│   └── domains/              # Buisness/game logic
 ├── graphql/
-│   ├── graphql.py            # Strawberry Schema & router setup
-│   ├── permissions.py        # BasePermission classes
-│   ├── resolvers/
-│   │   ├── clients.py        # Query & Mutation logic for clients
-│   │   └── root.py           # Root Query/Mutation entrypoints
-│   ├── schemas/
-│   │   └── clients.py        # GraphQL types & inputs
-│   └── services/
-│       └── clients.py        # Business-logic layer for clients
-├── models/
-│   ├── base.py               # Declarative base
-│   ├── clients.py            # Client model
-│   └── …                     # bots.py, buildings.py, items.py, recipes.py, structures.py
-├── config.py                 # Environment & app settings
-├── database.py               # Async engine & session factory
-├── main.py                   # FastAPI app & GraphQLRouter mount
-├── game.db                   # Local SQLite database (auto-created)
-├── .gitignore
-└── requirements.txt
+│   ├── resolvers/            # GraphQL query/mutation logic
+│   ├── schemas/              # GraphQL schemas for queries
+│   ├── inputs/               # GraphQL inputs for mutations
+│   ├── permissions.py        # Permission classes
+│   └── graphql.py            # Schema & router setup
+├── seed/                     # YAML data for initial DB seeding
+│   ├── bots.yaml
+│   ├── items.yaml
+│   └── structures.yaml
+├── workers/
+│   └── seed.py               # Worker that will run on every server start
+├── config.py                 # Environment settings
+├── main.py                   # App entry point
+└── requirements.txt          # Frozen packages
 ```
 
 ---
 
 ## Getting Started
 
-#### Prerequisites
+### Prerequisites
 
 - Python 3.10 or newer  
 - (Optional) Virtual environment tool: `venv`, `poetry`, etc.
 
-#### Installation
+### Installation
 
 1. Clone repository
 ```bash
@@ -92,7 +93,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-#### Configuration
+### Configuration
 
 Edit **`config.py`** or set environment variables as needed:
 
@@ -100,7 +101,7 @@ Edit **`config.py`** or set environment variables as needed:
 - (Optional) for PostgreSQL:  
   `postgresql+asyncpg://user:pass@host:port/dbname`
 
-#### Running the Server
+### Running the Server
 
 Start the ASGI server with hot reload:  
 ```bash
@@ -109,6 +110,17 @@ uvicorn main:app --reload
 
 - **GraphiQL UI:**  http://127.0.0.1:8000/graphql  
 - **OpenAPI docs:**  http://127.0.0.1:8000/docs  
+
+### Automatic seeding
+
+The server has a worker that will run on each start up.
+The worker reads YAML files from the seed/ directory 
+and uses service-layer logic to insert or update data.
+
+It's:
+ - Idempotent: You can run it multiple times safely.
+ - Validates referenced types by name (e.g., items in recipes).
+ - Logs skipped entries and handles missing types gracefully.
 
 ---
 
@@ -164,6 +176,21 @@ postgresql+asyncpg://user:password@host:5432/your_db
 ```
 
 3. Restart the server.
+
+---
+
+## Testing
+
+_Coming soon_
+
+Testing will cover both unit and integration layers, including:
+
+- GraphQL resolver behavior
+- Database service logic
+- Permission enforcement
+- Seeder validation
+
+> 🔧 Stay tuned – test setup and example cases will be added.
 
 ---
 
