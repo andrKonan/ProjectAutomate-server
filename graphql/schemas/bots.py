@@ -13,12 +13,6 @@ class BotRecipeScheme:
     amount: UUID
     created_at: datetime
 
-@strawberry.input(description="Payload for creating/updating a BotRecipe")
-class BotRecipeInput:
-    bot_type_id: UUID
-    item_type_id: UUID
-    amount: UUID
-
 
 @strawberry.type(description="A BotType in the system")
 class BotTypeScheme:
@@ -30,12 +24,3 @@ class BotTypeScheme:
     vision: int
     bot_recipes: list[BotRecipeScheme]
     created_at: datetime
-
-@strawberry.input(description="Payload for creating/updating a BotType")
-class BotTypeInput:
-    name: str
-    health: int
-    strength: int
-    speed: int
-    vision: int
-    bot_recipes: list[BotRecipeInput] | None = None

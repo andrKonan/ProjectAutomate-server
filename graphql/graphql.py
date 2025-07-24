@@ -38,5 +38,5 @@ graphql_app = GraphQLRouter(
         mutation=Mutation
     ), 
     context_getter=get_context,
-    graphiql=True
+    graphql_ide="graphiql"
 )

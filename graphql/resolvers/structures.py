@@ -1,19 +1,22 @@
 # server/graphql/resolvers/structures.py
 from typing import Sequence
+from uuid import UUID
 
 import strawberry
+from strawberry.types import Info
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.services import StructureTypeService
-from server.graphql.schemas import StructureTypeScheme, StructureTypeInput
+from server.graphql.schemas import StructureTypeScheme
+from server.graphql.inputs import StructureTypeInput
 from server.graphql.permissions import IsAuthenticated
 
 
-async def get_structure_type_by_id(info, id: strawberry.ID) -> StructureTypeScheme:
+async def get_structure_type_by_id(info: Info, id: UUID) -> StructureTypeScheme:
     db: AsyncSession = info.context["db"]
     return await StructureTypeService.get_by_id(db, id)
 
-async def list_structure_types(info) -> Sequence[StructureTypeScheme]:
+async def list_structure_types(info: Info) -> Sequence[StructureTypeScheme]:
     db: AsyncSession = info.context["db"]
     return await StructureTypeService.list_all(db)
 
@@ -32,17 +35,17 @@ class StructureTypeQuery:
     )
 
 
-async def create_structure_type(info, input: StructureTypeInput) -> StructureTypeScheme:
+async def create_structure_type(info: Info, input: StructureTypeInput) -> StructureTypeScheme:
     db: AsyncSession = info.context["db"]
     return await StructureTypeService.create(db, input)
 
 async def update_structure_type(
-    info, id: strawberry.ID, input: StructureTypeInput
+    info: Info, id: UUID, input: StructureTypeInput
 ) -> StructureTypeScheme:
     db: AsyncSession = info.context["db"]
     return await StructureTypeService.update(db, id, input)
 
-async def delete_structure_type(info, id: strawberry.ID) -> bool:
+async def delete_structure_type(info: Info, id: UUID) -> bool:
     db: AsyncSession = info.context["db"]
     return await StructureTypeService.delete(db, id)
 

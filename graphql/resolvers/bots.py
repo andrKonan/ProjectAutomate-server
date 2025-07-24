@@ -1,19 +1,22 @@
 # server/graphql/resolvers/bots.py
 from typing import Sequence
+from uuid import UUID
 
 import strawberry
+from strawberry.types import Info
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.services import BotTypeService
-from server.graphql.schemas import BotTypeScheme, BotTypeInput
+from server.graphql.schemas import BotTypeScheme
+from server.graphql.inputs import BotTypeInput
 from server.graphql.permissions import IsAuthenticated
 
 
-async def get_bot_type_by_id(info, id: strawberry.ID) -> BotTypeScheme:
+async def get_bot_type_by_id(info: Info, id: UUID) -> BotTypeScheme:
     db: AsyncSession = info.context["db"]
     return await BotTypeService.get_by_id(db, id)
 
-async def list_bot_types(info) -> Sequence[BotTypeScheme]:
+async def list_bot_types(info: Info) -> Sequence[BotTypeScheme]:
     db: AsyncSession = info.context["db"]
     return await BotTypeService.list_all(db)
 
@@ -32,17 +35,17 @@ class BotTypeQuery:
     )
 
 
-async def create_bot_type(info, input: BotTypeInput) -> BotTypeScheme:
+async def create_bot_type(info: Info, input: BotTypeInput) -> BotTypeScheme:
     db: AsyncSession = info.context["db"]
     return await BotTypeService.create(db, input)
 
 async def update_bot_type(
-    info, id: strawberry.ID, input: BotTypeInput
+    info: Info, id: UUID, input: BotTypeInput
 ) -> BotTypeScheme:
     db: AsyncSession = info.context["db"]
     return await BotTypeService.update(db, id, input)
 
-async def delete_bot_type(info, id: strawberry.ID) -> bool:
+async def delete_bot_type(info: Info, id: UUID) -> bool:
     db: AsyncSession = info.context["db"]
     return await BotTypeService.delete(db, id)
 

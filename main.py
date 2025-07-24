@@ -4,7 +4,7 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from server.database import engine
+from server.database import get_engine
 from server.database.models import Base
 
 from server.graphql import graphql_app
@@ -14,7 +14,9 @@ from server.workers.seed import run_all_seeds
 async def lifespan(app: FastAPI):
     print("Game server is starting up")
     
-    async with engine.begin() as conn:
+    local_engine = get_engine()
+    print("Tables to be created:", Base.metadata.tables.keys())
+    async with local_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
     seed_file = Path(__file__).parent / "seed"

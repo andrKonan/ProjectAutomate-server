@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import strawberry
 
 from server.database.models import StructureType as StructureTypeModel
-from server.graphql.schemas import StructureTypeInput
+from server.graphql.inputs import StructureTypeInput
 from server.graphql.scalars import UUID
 
 class StructureTypeService:

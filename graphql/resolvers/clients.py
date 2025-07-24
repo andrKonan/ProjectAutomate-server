@@ -1,17 +1,21 @@
 # server/graphql/resolvers/clients.py
+from uuid import UUID
+
 import strawberry
+from strawberry.types import Info
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from server.database.services import ClientService
-from server.graphql.schemas.clients import ClientScheme, ClientInput
+from server.graphql.schemas import ClientScheme
+from server.graphql.inputs import ClientInput
 from server.graphql.permissions import IsAuthenticated, IsClientOwner
 
 
-async def get_client_by_id(info, id: strawberry.ID) -> ClientScheme:
+async def get_client_by_id(info: Info, id: UUID) -> ClientScheme:
     db: AsyncSession = info.context["db"]
     return await ClientService.get_by_id(db, id)
 
-async def get_my_client(info) -> ClientScheme:
+async def get_my_client(info: Info) -> ClientScheme:
     print(info.context)
     return info.context.get("current_client")
 
@@ -29,15 +33,15 @@ class ClientQuery:
         permission_classes=[IsAuthenticated]
     )
 
-async def create_client(info, input: ClientInput) -> ClientScheme:
+async def create_client(info: Info, input: ClientInput) -> ClientScheme:
     db: AsyncSession = info.context["db"]
     return await ClientService.create(db, input)
 
-async def update_client(info, id: strawberry.ID, input: ClientInput) -> ClientScheme:
+async def update_client(info: Info, id: UUID, input: ClientInput) -> ClientScheme:
     db: AsyncSession = info.context["db"]
     return await ClientService.update(db, id, input)
 
-async def delete_client(info, id: strawberry.ID) -> bool:
+async def delete_client(info: Info, id: UUID) -> bool:
     db: AsyncSession = info.context["db"]
     return await ClientService.delete(db, id)
 

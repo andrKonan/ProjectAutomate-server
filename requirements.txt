@@ -8,3 +8,7 @@ pydantic-settings>=2.10
 aiosqlite>=0.21
 asyncpg>=0.30
 strawberry-graphql[fastapi]>=0.276
+
+pytest
+pytest-asyncio
+httpx

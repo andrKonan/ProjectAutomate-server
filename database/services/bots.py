@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import strawberry
 
 from server.database.models import BotType as BotTypeModel, BotRecipe as BotRecipeModel
-from server.graphql.schemas import BotTypeInput
+from server.graphql.inputs import BotTypeInput
 from server.graphql.scalars import UUID
 from server.database import eager_load_all
 

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import strawberry
 
 from server.database.models import ItemType as ItemTypeModel
-from server.graphql.schemas import ItemTypeInput
+from server.graphql.inputs import ItemTypeInput
 from server.graphql.scalars import UUID
 
 class ItemTypeService:

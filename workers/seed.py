@@ -9,37 +9,17 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from server.database import get_db, engine
+from server.database import get_db, get_engine
 from server.database.services import ItemTypeService, StructureTypeService, BotTypeService, BotRecipeService
 
 from server.database.models import Base, SeedMeta
 
-async def _ensure_seed_meta_table() -> None:
-    """
-    Create the seed_meta table if it does not exist.
-    Works with any SQLAlchemy AsyncEngine; no raw SQL.
-    """
-    # run_sync executes sync code (create_all) in the async connection
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all, tables=[SeedMeta.__table__])
-
-
-async def _already_applied(db: AsyncSession, sha: str) -> bool:
-    """
-    True if the given file hash is already present in seed_meta.
-    """
-    await _ensure_seed_meta_table()
-
+async def _already_applied(db, sha):
     result = await db.execute(select(SeedMeta).where(SeedMeta.file_sha == sha))
     return result.scalar_one_or_none() is not None
 
 
 async def _mark_applied(db: AsyncSession, sha: str, path: pathlib.Path) -> None:
-    """
-    Insert a row; if two workers race, the second one rolls back gracefully.
-    """
-    await _ensure_seed_meta_table()
-
     db.add(SeedMeta(file_sha=sha, file_path=str(path)))
 
     try:
@@ -154,8 +134,6 @@ async def seed_bot_types(file: pathlib.Path) -> None:
         await _mark_applied(db, sha, file)
         await db.commit()
         print(f"✔ Seeded {len(bots)} bot types (hash {sha[:7]})")
-
-        
 
 
 async def run_all_seeds(seed_dir: pathlib.Path) -> None:
