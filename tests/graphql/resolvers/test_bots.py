@@ -1,4 +1,5 @@
 # server/tests/graphql/resolvers/test_bots.py
+import uuid
 import pytest
 
 BOTTYPE_CREATE_MUTATION = r"""
@@ -74,7 +75,7 @@ query GetAllBotTypes {
 async def test_create_bottype(test_client, auth_headers):
     variables = {
         "input": {
-            "name": "BotTypeOne",
+            "name": f"BotTypeOne_{uuid.uuid4().hex[:8]}",
             "health": 100,
             "strength": 50,
             "speed": 20,
@@ -96,7 +97,7 @@ async def test_create_bottype(test_client, auth_headers):
 async def test_update_bottype(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": "BotTypeUpdate",
+            "name": f"BotTypeUpdate_{uuid.uuid4().hex[:8]}",
             "health": 80,
             "strength": 40,
             "speed": 25,
@@ -113,7 +114,7 @@ async def test_update_bottype(test_client, auth_headers):
     update_vars = {
         "id": create_data["id"],
         "input": {
-            "name": "UpdatedBotType",
+            "name": f"UpdatedBotType_{uuid.uuid4().hex[:8]}",
             "health": 90,
             "strength": 55,
             "speed": 30,
@@ -135,7 +136,7 @@ async def test_update_bottype(test_client, auth_headers):
 async def test_get_bottype_by_id(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": "BotTypeGet",
+            "name": f"BotTypeGet_{uuid.uuid4().hex[:8]}",
             "health": 70,
             "strength": 35,
             "speed": 15,
@@ -176,7 +177,7 @@ async def test_get_all_bottype(test_client, auth_headers):
 async def test_delete_bottype(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": "BotTypeDelete",
+            "name": f"BotTypeDelete_{uuid.uuid4().hex[:8]}",
             "health": 60,
             "strength": 30,
             "speed": 12,

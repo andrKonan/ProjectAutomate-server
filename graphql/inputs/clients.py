@@ -1,7 +1,7 @@
 # server/graphql/inputs/clients.py
-from uuid import UUID
-
 import strawberry
+
+from server.graphql.scalars import UUID
 
 @strawberry.input(description="Payload for creating a Client")
 class ClientCreateInput:

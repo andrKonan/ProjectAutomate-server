@@ -3,10 +3,12 @@ from .clients import ClientCreateInput, ClientUpdateInput
 from .items import ItemTypeInput
 from .structures import StructureTypeInput
 from .bots import BotRecipeInput, BotTypeInput
+from .buildings import BuildingRecipeInput, BuildingTypeInput
 
 __all__ = [
     "ClientCreateInput", "ClientUpdateInput",
     "ItemTypeInput",
     "StructureTypeInput",
-    "BotRecipeInput", "BotTypeInput"
+    "BotRecipeInput", "BotTypeInput",
+    "BuildingRecipeInput", "BuildingTypeInput"
 ]

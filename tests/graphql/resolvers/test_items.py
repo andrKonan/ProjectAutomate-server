@@ -1,4 +1,5 @@
 # server/tests/graphql/resolvers/test_items.py
+import uuid
 import pytest
 
 ITEMTYPE_CREATE_MUTATION = r"""
@@ -57,9 +58,10 @@ query GetAllItemTypes {
 }
 """
 
+
 @pytest.mark.asyncio
 async def test_create_itemtype(test_client, auth_headers):
-    variables = {"input": {"name": "ItemTypeOne", "durability": 100}}
+    variables = {"input": {"name": f"ItemTypeOne_{uuid.uuid4().hex[:8]}", "durability": 100}}
     response = await test_client.post(
         "/graphql",
         json={"query": ITEMTYPE_CREATE_MUTATION, "variables": variables},
@@ -70,9 +72,10 @@ async def test_create_itemtype(test_client, auth_headers):
     assert result["name"] == variables["input"]["name"]
     assert result["durability"] == variables["input"]["durability"]
 
+
 @pytest.mark.asyncio
 async def test_update_itemtype(test_client, auth_headers):
-    create_vars = {"input": {"name": "ItemTypeUpdate", "durability": 50}}
+    create_vars = {"input": {"name": f"ItemTypeUpdate_{uuid.uuid4().hex[:8]}", "durability": 50}}
     create_response = await test_client.post(
         "/graphql",
         json={"query": ITEMTYPE_CREATE_MUTATION, "variables": create_vars},
@@ -82,7 +85,7 @@ async def test_update_itemtype(test_client, auth_headers):
 
     update_vars = {
         "id": create_data["id"],
-        "input": {"name": "UpdatedItemType", "durability": 75}
+        "input": {"name": f"UpdatedItemType_{uuid.uuid4().hex[:8]}", "durability": 75}
     }
     update_response = await test_client.post(
         "/graphql",
@@ -94,9 +97,10 @@ async def test_update_itemtype(test_client, auth_headers):
     assert update_data["name"] == update_vars["input"]["name"]
     assert update_data["durability"] == update_vars["input"]["durability"]
 
+
 @pytest.mark.asyncio
 async def test_get_itemtype_by_id(test_client, auth_headers):
-    create_vars = {"input": {"name": "ItemTypeGet", "durability": 30}}
+    create_vars = {"input": {"name": f"ItemTypeGet_{uuid.uuid4().hex[:8]}", "durability": 30}}
     create_response = await test_client.post(
         "/graphql",
         json={"query": ITEMTYPE_CREATE_MUTATION, "variables": create_vars},
@@ -115,6 +119,7 @@ async def test_get_itemtype_by_id(test_client, auth_headers):
     assert get_data["id"] == created["id"]
     assert get_data["name"] == created["name"]
 
+
 @pytest.mark.asyncio
 async def test_get_all_itemtype(test_client, auth_headers):
     response = await test_client.post(
@@ -125,9 +130,10 @@ async def test_get_all_itemtype(test_client, auth_headers):
     data = response.json()["data"]["itemType"]["all"]
     assert isinstance(data, list)
 
+
 @pytest.mark.asyncio
 async def test_delete_itemtype(test_client, auth_headers):
-    create_vars = {"input": {"name": "ItemTypeDelete", "durability": 10}}
+    create_vars = {"input": {"name": f"ItemTypeDelete_{uuid.uuid4().hex[:8]}", "durability": 10}}
     create_response = await test_client.post(
         "/graphql",
         json={"query": ITEMTYPE_CREATE_MUTATION, "variables": create_vars},
