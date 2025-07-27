@@ -1,6 +1,6 @@
 # server/database/services/clients.py
 import secrets
-from typing import Sequence
+from typing import Sequence, Optional
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -19,14 +19,21 @@ class ClientService:
         return client
 
     @staticmethod
-    async def get_by_token(db: AsyncSession, token: str) -> ClientModel:
+    async def get_by_token(db: AsyncSession, token: str) -> Optional[ClientModel]:
         stmt = select(ClientModel).where(ClientModel._token == token)
         
         result = await db.execute(stmt)
         
         return result.scalar_one_or_none()
 
+    @staticmethod
+    async def get_by_name(db: AsyncSession, name: str) -> Optional[ClientModel]:
+        stmt = select(ClientModel).where(ClientModel.name == name)
 
+        result = await db.execute(stmt)
+
+        return result.scalar_one_or_none()
+    
     @staticmethod
     async def list_all(db: AsyncSession) -> Sequence[ClientModel]:
         result = await db.execute(select(ClientModel))
@@ -34,6 +41,10 @@ class ClientService:
 
     @staticmethod
     async def create(db: AsyncSession, data: ClientCreateInput) -> ClientModel:
+        client = await ClientService.get_by_name(db, data.name)
+        if client is not None:
+            raise HTTPException(status_code=403, detail="Client with that name already exists")
+        
         token = secrets.token_hex(64)
         client = ClientModel(name=data.name, _token=token)
         db.add(client)
