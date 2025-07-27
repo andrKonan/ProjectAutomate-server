@@ -9,10 +9,16 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from server.database import get_db, get_engine
-from server.database.services import ItemTypeService, StructureTypeService, BotTypeService, BotRecipeService
+from server.database import get_db
+from server.database.services import (
+    ItemTypeService, 
+    StructureTypeService, 
+    BotTypeService, 
+    BotRecipeService, 
+    BuildingTypeService
+)
 
-from server.database.models import Base, SeedMeta
+from server.database.models import SeedMeta
 
 async def _already_applied(db, sha):
     result = await db.execute(select(SeedMeta).where(SeedMeta.file_sha == sha))
@@ -135,8 +141,26 @@ async def seed_bot_types(file: pathlib.Path) -> None:
         await db.commit()
         print(f"✔ Seeded {len(bots)} bot types (hash {sha[:7]})")
 
+async def seed_building_types(file: pathlib.Path) -> None:
+    sha = _file_sha256(file)
+
+    async for db in get_db():
+        if await _already_applied(db, sha):
+            print(f"✔ BuildingType seed already applied: {sha[:7]}")
+            return
+
+        payload = yaml.safe_load(file.read_text())
+        buildings = payload.get("buildings", [])
+
+        for raw in buildings:
+            await BuildingTypeService.upsert_from_dict(db, raw)
+
+        await _mark_applied(db, sha, file)
+        await db.commit()
+        print(f"✔ Seeded {len(buildings)} building types (hash {sha[:7]})")
 
 async def run_all_seeds(seed_dir: pathlib.Path) -> None:
     await seed_item_types(seed_dir / "items.yaml")
     await seed_structure_types(seed_dir / "structures.yaml")
     await seed_bot_types(seed_dir / "bots.yaml")
+    await seed_building_types(seed_dir / "buildings.yaml")
