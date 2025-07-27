@@ -1,0 +1,1 @@
+# server/tests/graphql/__init__.py

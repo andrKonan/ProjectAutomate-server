@@ -1,4 +1,4 @@
-# server/graphql/schema/clients.py
+# server/graphql/schemas/bots.py
 from datetime import datetime
 
 import strawberry
