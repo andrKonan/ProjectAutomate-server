@@ -2,6 +2,8 @@
 import pytest
 import uuid
 
+from ...utils import generate_unique_name, graphql_post, assert_error_contains
+
 BUILDINGTYPE_CREATE_MUTATION = r"""
 mutation CreateBuildingType($input: BuildingTypeInput!) {
   buildingType {
@@ -62,7 +64,7 @@ query GetAllBuildingTypes {
 async def test_create_buildingtype(test_client, auth_headers):
     variables = {
         "input": {
-            "name": f"BuildingTypeOne_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BuildingTypeOne"),
             "health": 100,
             "buildingRecipes": []
         }
@@ -81,7 +83,7 @@ async def test_create_buildingtype(test_client, auth_headers):
 async def test_update_buildingtype(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": f"BuildingTypeUpdate_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BuildingTypeUpdate"),
             "health": 80,
             "buildingRecipes": []
         }
@@ -96,7 +98,7 @@ async def test_update_buildingtype(test_client, auth_headers):
     update_vars = {
         "id": created["id"],
         "input": {
-            "name": f"UpdatedBuildingType_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("UpdatedBuildingType"),
             "health": 90,
             "buildingRecipes": []
         }
@@ -114,7 +116,7 @@ async def test_update_buildingtype(test_client, auth_headers):
 async def test_get_buildingtype_by_id(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": f"BuildingTypeGet_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BuildingTypeGet"),
             "health": 70,
             "buildingRecipes": []
         }
@@ -149,7 +151,7 @@ async def test_get_all_buildingtype(test_client, auth_headers):
 async def test_delete_buildingtype(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": f"BuildingTypeDelete_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BuildingTypeDelete"),
             "health": 60,
             "buildingRecipes": []
         }

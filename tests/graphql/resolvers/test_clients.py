@@ -2,6 +2,8 @@
 import uuid
 import pytest
 
+from ...utils import generate_unique_name, graphql_post, assert_error_contains
+
 CLIENT_REGISTER_MUTATION = r"""
 mutation Register($name: String!) {
     client {
@@ -51,7 +53,7 @@ mutation DeleteClient($id: UUID!) {
 
 @pytest.mark.asyncio
 async def test_create_client(test_client):
-    variables = {"name": f"TestUserCreate_{uuid.uuid4().hex[:8]}"}
+    variables = {"name": generate_unique_name("TestUserCreate")}
     response = await test_client.post(
         "/graphql",
         json={"query": CLIENT_REGISTER_MUTATION, "variables": variables}
@@ -66,7 +68,7 @@ async def test_create_client(test_client):
 
 @pytest.mark.asyncio
 async def test_update_client(test_client):
-    variables = {"name": f"TestUserUpdate_{uuid.uuid4().hex[:8]}"}
+    variables = {"name": generate_unique_name("TestUserUpdate")}
     response = await test_client.post(
         "/graphql",
         json={"query": CLIENT_REGISTER_MUTATION, "variables": variables}
@@ -78,7 +80,7 @@ async def test_update_client(test_client):
         "Authorization": f"Bearer {data['Token']}"
     }
 
-    rename_variables = {"name": f"TestUpdate_{uuid.uuid4().hex[:8]}", "id": data['id']}
+    rename_variables = {"name": generate_unique_name("TestUpdate"), "id": data['id']}
     response = await test_client.post(
         "/graphql",
         json={"query": CLIENT_RENAME_MUTATUION, "variables": rename_variables}, 
@@ -91,7 +93,7 @@ async def test_update_client(test_client):
 
 @pytest.mark.asyncio
 async def test_get_client(test_client):
-    variables = {"name": f"TestUserGetMe_{uuid.uuid4().hex[:8]}"}
+    variables = {"name": generate_unique_name("TestUserGetMe")}
     response = await test_client.post(
         "/graphql",
         json={"query": CLIENT_REGISTER_MUTATION, "variables": variables}

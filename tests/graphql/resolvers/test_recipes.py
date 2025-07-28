@@ -2,6 +2,8 @@
 import uuid
 import pytest
 
+from ...utils import generate_unique_name, graphql_post, assert_error_contains
+
 ITEMTYPE_CREATE_MUTATION = r"""
 mutation CreateItemType($input: ItemTypeInput!) {
   itemType {
@@ -85,34 +87,34 @@ query GetAllRecipes {
 async def create_item_type(test_client, auth_headers):
     variables = {
         "input": {
-            "name": f"Item_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("Item"),
             "durability": 100
         }
     }
-    response = await test_client.post(
-        "/graphql", json={"query": ITEMTYPE_CREATE_MUTATION, "variables": variables}, headers=auth_headers
-    )
-    return response.json()["data"]["itemType"]["create"]["id"]
+
+    data = await graphql_post(test_client, ITEMTYPE_CREATE_MUTATION, variables, auth_headers)
+
+    return data["data"]["itemType"]["create"]["id"]
 
 async def create_building_type(test_client, auth_headers):
     variables = {
         "input": {
-            "name": f"Building_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("Building"),
             "health": 100,
             "buildingRecipes": []
         }
     }
-    response = await test_client.post(
-        "/graphql", json={"query": BUILDINGTYPE_CREATE_MUTATION, "variables": variables}, headers=auth_headers
-    )
-    return response.json()["data"]["buildingType"]["create"]["id"]
+
+    data = await graphql_post(test_client, BUILDINGTYPE_CREATE_MUTATION, variables, auth_headers)
+
+    return data["data"]["buildingType"]["create"]["id"]
 
 async def create_recipe(test_client, auth_headers):
     item_type_id = await create_item_type(test_client, auth_headers)
     building_type_id = await create_building_type(test_client, auth_headers)
     variables = {
         "input": {
-            "name": f"Recipe_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("Recipe"),
             "buildingTypeId": building_type_id,
             "outputItemTypeId": item_type_id,
             "outputAmount": 5,
@@ -124,10 +126,10 @@ async def create_recipe(test_client, auth_headers):
             ]
         }
     }
-    response = await test_client.post(
-        "/graphql", json={"query": RECIPE_CREATE_MUTATION, "variables": variables}, headers=auth_headers
-    )
-    return response.json()["data"]["recipe"]["create"]
+
+    data = await graphql_post(test_client, RECIPE_CREATE_MUTATION, variables, auth_headers)
+
+    return data["data"]["recipe"]["create"]
 
 @pytest.mark.asyncio
 async def test_create_recipe(test_client, auth_headers):
@@ -142,7 +144,7 @@ async def test_update_recipe(test_client, auth_headers):
     new_item_type_id = await create_item_type(test_client, auth_headers)
     new_building_type_id = await create_building_type(test_client, auth_headers)
 
-    new_name = f"UpdatedRecipe_{uuid.uuid4().hex[:8]}"
+    new_name = generate_unique_name("UpdatedRecipe")
     update_vars = {
         "id": original_recipe["id"],
         "input": {
@@ -159,12 +161,8 @@ async def test_update_recipe(test_client, auth_headers):
         }
     }
 
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_UPDATE_MUTATION, "variables": update_vars},
-        headers=auth_headers
-    )
-    updated = response.json()["data"]["recipe"]["update"]
+    data = await graphql_post(test_client, RECIPE_UPDATE_MUTATION, update_vars, auth_headers)
+    updated = data["data"]["recipe"]["update"]
 
     assert updated["name"] == new_name
     assert updated["outputAmount"] == 10
@@ -172,42 +170,32 @@ async def test_update_recipe(test_client, auth_headers):
 @pytest.mark.asyncio
 async def test_get_recipe_by_id(test_client, auth_headers):
     recipe = await create_recipe(test_client, auth_headers)
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_GET_BY_ID_QUERY, "variables": {"id": recipe["id"]}},
-        headers=auth_headers
-    )
-    fetched = response.json()["data"]["recipe"]["byId"]
+
+    data = await graphql_post(test_client, RECIPE_GET_BY_ID_QUERY, {"id": recipe["id"]}, auth_headers)
+    fetched = data["data"]["recipe"]["byId"]
+
     assert fetched["id"] == recipe["id"]
 
 @pytest.mark.asyncio
 async def test_get_all_recipes(test_client, auth_headers):
-    response = await test_client.post(
-        "/graphql", json={"query": RECIPE_GET_ALL_QUERY}, headers=auth_headers
-    )
-    data = response.json()["data"]["recipe"]["all"]
+    data = await graphql_post(test_client, RECIPE_GET_ALL_QUERY, headers=auth_headers)
+    data = data["data"]["recipe"]["all"]
+
     assert isinstance(data, list)
 
 @pytest.mark.asyncio
 async def test_delete_recipe(test_client, auth_headers):
     recipe = await create_recipe(test_client, auth_headers)
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_DELETE_MUTATION, "variables": {"id": recipe["id"]}},
-        headers=auth_headers
-    )
-    assert response.json()["data"]["recipe"]["delete"] is True
+
+    data = await graphql_post(test_client, RECIPE_DELETE_MUTATION, {"id": recipe["id"]}, auth_headers)
+
+    assert data["data"]["recipe"]["delete"] is True
 
 @pytest.mark.asyncio
 async def test_create_recipe_invalid_input(test_client, auth_headers):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_CREATE_MUTATION, "variables": {"input": {}}},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert any("field" in err["message"].lower() for err in data["errors"])
+    data = await graphql_post(test_client, RECIPE_CREATE_MUTATION, {"input": {}}, auth_headers)
+
+    assert_error_contains(data, "field")
 
 @pytest.mark.asyncio
 async def test_update_recipe_invalid_id(test_client, auth_headers):
@@ -226,44 +214,26 @@ async def test_update_recipe_invalid_id(test_client, auth_headers):
         }
     }
 
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_UPDATE_MUTATION, "variables": update_vars},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "not found" in data["errors"][0]["message"].lower()
+    data = await graphql_post(test_client, RECIPE_UPDATE_MUTATION, update_vars, auth_headers)
+    
+    assert_error_contains(data, "not found")
 
 @pytest.mark.asyncio
 async def test_delete_recipe_invalid_id(test_client, auth_headers):
     fake_id = str(uuid.uuid4())
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_DELETE_MUTATION, "variables": {"id": fake_id}},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "not found" in data["errors"][0]["message"].lower()
+
+    data = await graphql_post(test_client, RECIPE_DELETE_MUTATION, {"id": fake_id}, auth_headers)
+    
+    assert_error_contains(data, "not found")
 
 @pytest.mark.asyncio
 async def test_get_recipe_by_id_malformed_uuid(test_client, auth_headers):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_GET_BY_ID_QUERY, "variables": {"id": "invalid-uuid"}},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "uuid" in data["errors"][0]["message"].lower()
+    data = await graphql_post(test_client, RECIPE_GET_BY_ID_QUERY, {"id": "invalid-uuid"}, auth_headers)
+    
+    assert_error_contains(data, "uuid")
 
 @pytest.mark.asyncio
 async def test_get_all_recipes_unauthenticated(test_client):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": RECIPE_GET_ALL_QUERY}
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "authorization required" in data["errors"][0]["message"].lower()
+    data = await graphql_post(test_client, RECIPE_GET_ALL_QUERY)
+    
+    assert_error_contains(data, "authorization required")

@@ -2,6 +2,8 @@
 import uuid
 import pytest
 
+from ...utils import generate_unique_name, graphql_post, assert_error_contains
+
 BOTTYPE_CREATE_MUTATION = r"""
 mutation CreateBotType($input: BotTypeInput!) {
   botType {
@@ -75,7 +77,7 @@ query GetAllBotTypes {
 async def test_create_bottype(test_client, auth_headers):
     variables = {
         "input": {
-            "name": f"BotTypeOne_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BotTypeOne"),
             "health": 100,
             "strength": 50,
             "speed": 20,
@@ -97,7 +99,7 @@ async def test_create_bottype(test_client, auth_headers):
 async def test_update_bottype(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": f"BotTypeUpdate_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BotTypeUpdate"),
             "health": 80,
             "strength": 40,
             "speed": 25,
@@ -114,7 +116,7 @@ async def test_update_bottype(test_client, auth_headers):
     update_vars = {
         "id": create_data["id"],
         "input": {
-            "name": f"UpdatedBotType_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("UpdatedBotType"),
             "health": 90,
             "strength": 55,
             "speed": 30,
@@ -136,7 +138,7 @@ async def test_update_bottype(test_client, auth_headers):
 async def test_get_bottype_by_id(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": f"BotTypeGet_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BotTypeGet"),
             "health": 70,
             "strength": 35,
             "speed": 15,
@@ -177,7 +179,7 @@ async def test_get_all_bottype(test_client, auth_headers):
 async def test_delete_bottype(test_client, auth_headers):
     create_vars = {
         "input": {
-            "name": f"BotTypeDelete_{uuid.uuid4().hex[:8]}",
+            "name": generate_unique_name("BotTypeDelete"),
             "health": 60,
             "strength": 30,
             "speed": 12,

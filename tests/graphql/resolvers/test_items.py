@@ -2,6 +2,8 @@
 import uuid
 import pytest
 
+from ...utils import generate_unique_name, graphql_post, assert_error_contains
+
 ITEMTYPE_CREATE_MUTATION = r"""
 mutation CreateItemType($input: ItemTypeInput!) {
   itemType {
@@ -61,106 +63,74 @@ query GetAllItemTypes {
 
 @pytest.mark.asyncio
 async def test_create_itemtype(test_client, auth_headers):
-    variables = {"input": {"name": f"ItemTypeOne_{uuid.uuid4().hex[:8]}", "durability": 100}}
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_CREATE_MUTATION, "variables": variables},
-        headers=auth_headers
-    )
-    data = response.json()
+    variables = {"input": {"name": generate_unique_name("ItemTypeOne"), "durability": 100}}
+
+    data = await graphql_post(test_client, ITEMTYPE_CREATE_MUTATION, variables, auth_headers)
+    
     result = data["data"]["itemType"]["create"]
     assert result["name"] == variables["input"]["name"]
     assert result["durability"] == variables["input"]["durability"]
 
-
 @pytest.mark.asyncio
 async def test_update_itemtype(test_client, auth_headers):
-    create_vars = {"input": {"name": f"ItemTypeUpdate_{uuid.uuid4().hex[:8]}", "durability": 50}}
-    create_response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_CREATE_MUTATION, "variables": create_vars},
-        headers=auth_headers
-    )
-    create_data = create_response.json()["data"]["itemType"]["create"]
+    create_vars = {"input": {"name": generate_unique_name("ItemTypeUpdate"), "durability": 50}}
+
+    data = await graphql_post(test_client, ITEMTYPE_CREATE_MUTATION, create_vars, auth_headers)
+    create_data = data["data"]["itemType"]["create"]
 
     update_vars = {
         "id": create_data["id"],
-        "input": {"name": f"UpdatedItemType_{uuid.uuid4().hex[:8]}", "durability": 75}
+        "input": {"name": generate_unique_name("UpdatedItemType"), "durability": 75}
     }
-    update_response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_UPDATE_MUTATION, "variables": update_vars},
-        headers=auth_headers
-    )
-    update_data = update_response.json()["data"]["itemType"]["update"]
+
+    data = await graphql_post(test_client, ITEMTYPE_UPDATE_MUTATION, update_vars, auth_headers)
+    update_data = data["data"]["itemType"]["update"]
 
     assert update_data["name"] == update_vars["input"]["name"]
     assert update_data["durability"] == update_vars["input"]["durability"]
 
-
 @pytest.mark.asyncio
 async def test_get_itemtype_by_id(test_client, auth_headers):
-    create_vars = {"input": {"name": f"ItemTypeGet_{uuid.uuid4().hex[:8]}", "durability": 30}}
-    create_response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_CREATE_MUTATION, "variables": create_vars},
-        headers=auth_headers
-    )
-    created = create_response.json()["data"]["itemType"]["create"]
+    create_vars = {"input": {"name": generate_unique_name("ItemTypeGet"), "durability": 30}}
 
-    query_vars = {"id": created["id"]}
-    get_response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_GET_BY_ID_QUERY, "variables": query_vars},
-        headers=auth_headers
-    )
-    get_data = get_response.json()["data"]["itemType"]["byId"]
+    data = await graphql_post(test_client, ITEMTYPE_CREATE_MUTATION, create_vars, auth_headers)
+    create_data = data["data"]["itemType"]["create"]
 
-    assert get_data["id"] == created["id"]
-    assert get_data["name"] == created["name"]
+    query_vars = {"id": create_data["id"]}
+    
+    data = await graphql_post(test_client, ITEMTYPE_GET_BY_ID_QUERY, query_vars, auth_headers)
+    get_data = data["data"]["itemType"]["byId"]
 
+    assert get_data["id"] == create_data["id"]
+    assert get_data["name"] == create_data["name"]
 
 @pytest.mark.asyncio
 async def test_get_all_itemtype(test_client, auth_headers):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_GET_ALL_QUERY},
-        headers=auth_headers
-    )
-    data = response.json()["data"]["itemType"]["all"]
-    assert isinstance(data, list)
+    data = await graphql_post(test_client, ITEMTYPE_GET_ALL_QUERY, headers=auth_headers)
 
+    data = data["data"]["itemType"]["all"]
+
+    assert isinstance(data, list)
 
 @pytest.mark.asyncio
 async def test_delete_itemtype(test_client, auth_headers):
-    create_vars = {"input": {"name": f"ItemTypeDelete_{uuid.uuid4().hex[:8]}", "durability": 10}}
-    create_response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_CREATE_MUTATION, "variables": create_vars},
-        headers=auth_headers
-    )
-    created = create_response.json()["data"]["itemType"]["create"]
+    create_vars = {"input": {"name": generate_unique_name("ItemTypeDelete"), "durability": 10}}
 
-    delete_vars = {"id": created["id"]}
-    delete_response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_DELETE_MUTATION, "variables": delete_vars},
-        headers=auth_headers
-    )
-    delete_data = delete_response.json()["data"]["itemType"]["delete"]
+    data = await graphql_post(test_client, ITEMTYPE_CREATE_MUTATION, create_vars, auth_headers)
+    create_data = data["data"]["itemType"]["create"]
+
+    delete_vars = {"id": create_data["id"]}
+    
+    data = await graphql_post(test_client, ITEMTYPE_DELETE_MUTATION, delete_vars, auth_headers)
+    delete_data = data["data"]["itemType"]["delete"]
 
     assert delete_data is True
 
 @pytest.mark.asyncio
 async def test_create_itemtype_missing_fields(test_client, auth_headers):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_CREATE_MUTATION, "variables": {"input": {}}},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "field" in data["errors"][0]["message"].lower()
+    data = await graphql_post(test_client, ITEMTYPE_CREATE_MUTATION, {"input": {}}, auth_headers)
+    
+    assert_error_contains(data, "field")
 
 @pytest.mark.asyncio
 async def test_update_itemtype_invalid_id(test_client, auth_headers):
@@ -172,44 +142,27 @@ async def test_update_itemtype_invalid_id(test_client, auth_headers):
             "durability": 999
         }
     }
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_UPDATE_MUTATION, "variables": update_vars},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "not found" in data["errors"][0]["message"].lower()
+
+    data = await graphql_post(test_client, ITEMTYPE_UPDATE_MUTATION, update_vars, auth_headers)
+
+    assert_error_contains(data, "not found")
 
 @pytest.mark.asyncio
 async def test_delete_itemtype_invalid_id(test_client, auth_headers):
     fake_id = str(uuid.uuid4())
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_DELETE_MUTATION, "variables": {"id": fake_id}},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "not found" in data["errors"][0]["message"].lower()
+    
+    data = await graphql_post(test_client, ITEMTYPE_DELETE_MUTATION, {"id": fake_id}, auth_headers)
+    
+    assert_error_contains(data, "not found")
 
 @pytest.mark.asyncio
 async def test_get_itemtype_by_id_malformed_uuid(test_client, auth_headers):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_GET_BY_ID_QUERY, "variables": {"id": "not-a-uuid"}},
-        headers=auth_headers
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "uuid" in data["errors"][0]["message"].lower()
+    data = await graphql_post(test_client, ITEMTYPE_GET_BY_ID_QUERY, {"id": "not-a-uuid"}, auth_headers)
+
+    assert_error_contains(data, "uuid")
 
 @pytest.mark.asyncio
 async def test_get_all_itemtype_unauthenticated(test_client):
-    response = await test_client.post(
-        "/graphql",
-        json={"query": ITEMTYPE_GET_ALL_QUERY}
-    )
-    data = response.json()
-    assert "errors" in data
-    assert "authorization required" in data["errors"][0]["message"].lower()
+    data = await graphql_post(test_client, ITEMTYPE_GET_ALL_QUERY)
+
+    assert_error_contains(data, "authorization required")

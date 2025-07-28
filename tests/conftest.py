@@ -9,6 +9,7 @@ from httpx import ASGITransport
 
 from server.main import app, lifespan
 from server.database import get_db
+from .utils import generate_unique_name
 
 @pytest_asyncio.fixture(scope="module")
 async def test_client() -> AsyncGenerator[AsyncClient, None]:
@@ -19,7 +20,7 @@ async def test_client() -> AsyncGenerator[AsyncClient, None]:
 
 @pytest_asyncio.fixture(scope="module")
 async def auth_headers(test_client):
-    variables = {"name": f"TestClient_{uuid.uuid4().hex[:8]}"}
+    variables = {"name": generate_unique_name("TestClient")}
     response = await test_client.post(
         "/graphql",
         json={"query": 
