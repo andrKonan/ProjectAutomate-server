@@ -27,7 +27,7 @@ class Recipe(BaseRepr):
 
     name: Mapped[str] = mapped_column(String, unique=True)
 
-    building_type_id:    Mapped[int] = mapped_column(ForeignKey("building_types.id"))
+    building_type_id:    Mapped[UUID] = mapped_column(ForeignKey("building_types.id"))
     output_item_type_id: Mapped[UUID] = mapped_column(ForeignKey("item_types.id"))
     output_amount:       Mapped[int] = mapped_column(Integer)
 
