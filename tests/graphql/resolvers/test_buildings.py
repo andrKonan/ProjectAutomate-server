@@ -79,7 +79,6 @@ async def test_create_buildingtype(test_client, auth_headers):
 
 @pytest.mark.asyncio
 async def test_update_buildingtype(test_client, auth_headers):
-    # Create a building type first
     create_vars = {
         "input": {
             "name": f"BuildingTypeUpdate_{uuid.uuid4().hex[:8]}",
@@ -94,7 +93,6 @@ async def test_update_buildingtype(test_client, auth_headers):
     )
     created = create_response.json()["data"]["buildingType"]["create"]
 
-    # Update the building type
     update_vars = {
         "id": created["id"],
         "input": {
@@ -169,3 +167,67 @@ async def test_delete_buildingtype(test_client, auth_headers):
         headers=auth_headers
     )
     assert delete_response.json()["data"]["buildingType"]["delete"] is True
+
+@pytest.mark.asyncio
+async def test_create_buildingtype_missing_fields(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": BUILDINGTYPE_CREATE_MUTATION, "variables": {"input": {}}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "field" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_update_buildingtype_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    update_vars = {
+        "id": fake_id,
+        "input": {
+            "name": "InvalidUpdate",
+            "health": 200,
+            "buildingRecipes": []
+        }
+    }
+    response = await test_client.post(
+        "/graphql",
+        json={"query": BUILDINGTYPE_UPDATE_MUTATION, "variables": update_vars},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_delete_buildingtype_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    response = await test_client.post(
+        "/graphql",
+        json={"query": BUILDINGTYPE_DELETE_MUTATION, "variables": {"id": fake_id}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_buildingtype_by_id_malformed_uuid(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": BUILDINGTYPE_GET_BY_ID_QUERY, "variables": {"id": "not-a-uuid"}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "uuid" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_all_buildingtypes_unauthenticated(test_client):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": BUILDINGTYPE_GET_ALL_QUERY}
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "authorization required" in data["errors"][0]["message"].lower()

@@ -150,3 +150,66 @@ async def test_delete_itemtype(test_client, auth_headers):
     delete_data = delete_response.json()["data"]["itemType"]["delete"]
 
     assert delete_data is True
+
+@pytest.mark.asyncio
+async def test_create_itemtype_missing_fields(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": ITEMTYPE_CREATE_MUTATION, "variables": {"input": {}}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "field" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_update_itemtype_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    update_vars = {
+        "id": fake_id,
+        "input": {
+            "name": "FakeItem",
+            "durability": 999
+        }
+    }
+    response = await test_client.post(
+        "/graphql",
+        json={"query": ITEMTYPE_UPDATE_MUTATION, "variables": update_vars},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_delete_itemtype_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    response = await test_client.post(
+        "/graphql",
+        json={"query": ITEMTYPE_DELETE_MUTATION, "variables": {"id": fake_id}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_itemtype_by_id_malformed_uuid(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": ITEMTYPE_GET_BY_ID_QUERY, "variables": {"id": "not-a-uuid"}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "uuid" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_all_itemtype_unauthenticated(test_client):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": ITEMTYPE_GET_ALL_QUERY}
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "authorization required" in data["errors"][0]["message"].lower()

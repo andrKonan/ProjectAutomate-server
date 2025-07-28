@@ -212,3 +212,70 @@ async def test_delete_structuretype(test_client, auth_headers):
         headers=auth_headers,
     )
     assert delete_response.json()["data"]["structureType"]["delete"] is True
+
+@pytest.mark.asyncio
+async def test_create_structuretype_missing_fields(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": STRUCTURETYPE_CREATE_MUTATION, "variables": {"input": {}}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "field" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_update_structuretype_invalid_id(test_client, auth_headers):
+    item_type_id = await create_item_type(test_client, auth_headers)
+    fake_id = str(uuid.uuid4())
+    update_vars = {
+        "id": fake_id,
+        "input": {
+            "name": "GhostStructure",
+            "health": 80,
+            "itemTypeId": item_type_id,
+            "maxItems": 2,
+            "itemToEngageId": None
+        }
+    }
+    response = await test_client.post(
+        "/graphql",
+        json={"query": STRUCTURETYPE_UPDATE_MUTATION, "variables": update_vars},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_delete_structuretype_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    response = await test_client.post(
+        "/graphql",
+        json={"query": STRUCTURETYPE_DELETE_MUTATION, "variables": {"id": fake_id}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_structuretype_by_id_malformed_uuid(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": STRUCTURETYPE_GET_BY_ID_QUERY, "variables": {"id": "invalid-uuid"}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "uuid" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_all_structuretypes_unauthenticated(test_client):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": STRUCTURETYPE_GET_ALL_QUERY}
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "authorization required" in data["errors"][0]["message"].lower()

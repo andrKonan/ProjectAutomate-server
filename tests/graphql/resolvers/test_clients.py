@@ -40,6 +40,14 @@ query GetMyClient {
 }
 """
 
+CLIENT_DELETE_MUTATION = r"""
+mutation DeleteClient($id: UUID!) {
+  client {
+    delete(id: $id)
+  }
+}
+"""
+
 
 @pytest.mark.asyncio
 async def test_create_client(test_client):
@@ -103,3 +111,60 @@ async def test_get_client(test_client):
 
     for key, value in data_create.items():
         assert value == data_response.get(key)
+
+@pytest.mark.asyncio
+async def test_register_client_missing_fields(test_client):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": CLIENT_REGISTER_MUTATION, "variables": {}}
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "required type" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_me_unauthenticated(test_client):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": CLIENT_GET_ME_QUERY}
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "authorization required" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_delete_client_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    response = await test_client.post(
+        "/graphql",
+        json={"query": CLIENT_DELETE_MUTATION, "variables": {"id": fake_id}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "permission" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_register_client_duplicate_username(test_client):
+    username = f"duplicate_user_{uuid.uuid4().hex[:6]}"
+    password = "Secure123"
+
+    await test_client.post(
+        "/graphql",
+        json={"query": CLIENT_REGISTER_MUTATION, "variables": {
+            "name": username,
+            "password": password
+        }}
+    )
+
+    response = await test_client.post(
+        "/graphql",
+        json={"query": CLIENT_REGISTER_MUTATION, "variables": {
+            "name": username,
+            "password": password
+        }}
+    )
+
+    data = response.json()
+    assert "errors" in data
+    assert "already exists" in data["errors"][0]["message"].lower()

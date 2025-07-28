@@ -197,3 +197,73 @@ async def test_delete_recipe(test_client, auth_headers):
         headers=auth_headers
     )
     assert response.json()["data"]["recipe"]["delete"] is True
+
+@pytest.mark.asyncio
+async def test_create_recipe_invalid_input(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": RECIPE_CREATE_MUTATION, "variables": {"input": {}}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert any("field" in err["message"].lower() for err in data["errors"])
+
+@pytest.mark.asyncio
+async def test_update_recipe_invalid_id(test_client, auth_headers):
+    item_type_id = await create_item_type(test_client, auth_headers)
+    building_type_id = await create_building_type(test_client, auth_headers)
+    fake_id = str(uuid.uuid4())
+
+    update_vars = {
+        "id": fake_id,
+        "input": {
+            "name": "InvalidUpdate",
+            "buildingTypeId": building_type_id,
+            "outputItemTypeId": item_type_id,
+            "outputAmount": 10,
+            "ingredients": [{"itemTypeId": item_type_id, "amount": 1}]
+        }
+    }
+
+    response = await test_client.post(
+        "/graphql",
+        json={"query": RECIPE_UPDATE_MUTATION, "variables": update_vars},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_delete_recipe_invalid_id(test_client, auth_headers):
+    fake_id = str(uuid.uuid4())
+    response = await test_client.post(
+        "/graphql",
+        json={"query": RECIPE_DELETE_MUTATION, "variables": {"id": fake_id}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "not found" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_recipe_by_id_malformed_uuid(test_client, auth_headers):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": RECIPE_GET_BY_ID_QUERY, "variables": {"id": "invalid-uuid"}},
+        headers=auth_headers
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "uuid" in data["errors"][0]["message"].lower()
+
+@pytest.mark.asyncio
+async def test_get_all_recipes_unauthenticated(test_client):
+    response = await test_client.post(
+        "/graphql",
+        json={"query": RECIPE_GET_ALL_QUERY}
+    )
+    data = response.json()
+    assert "errors" in data
+    assert "authorization required" in data["errors"][0]["message"].lower()
