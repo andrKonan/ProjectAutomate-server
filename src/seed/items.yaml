@@ -1,0 +1,20 @@
+# server/src/seed/items.yaml
+version: 1
+items:
+  - name: "Wooden Log"
+    durability: null
+
+  - name: "Wooden Plank"
+    durability: null
+
+  - name: "Wooden Stick"
+    durability: 10
+
+  - name: "Stone"
+    durability: 20
+
+  - name: "Iron Ore"
+    durability: null
+    
+  - name: "Coal Ore"
+    durability: null

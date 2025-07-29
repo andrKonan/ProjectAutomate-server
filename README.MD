@@ -41,25 +41,49 @@ A FastAPI-powered, Strawberry-GraphQL backend for the Resource Bot game. Players
 ## Project Structure
 ```
 server/
-├── database/
-│   ├── models/               # SQLAlchemy models (bots, buildings, etc.)
-│   ├── services/             # CRUD logic, database interaction
-│   └── domains/              # Buisness/game logic
-├── graphql/
-│   ├── resolvers/            # GraphQL query/mutation logic
-│   ├── schemas/              # GraphQL schemas for queries
-│   ├── inputs/               # GraphQL inputs for mutations
-│   ├── permissions.py        # Permission classes
-│   └── graphql.py            # Schema & router setup
-├── seed/                     # YAML data for initial DB seeding
-│   ├── bots.yaml
-│   ├── items.yaml
-│   └── structures.yaml
-├── workers/
-│   └── seed.py               # Worker that will run on every server start
-├── config.py                 # Environment settings
-├── main.py                   # App entry point
-└── requirements.txt          # Frozen packages
+├── src/                             # Main application code
+│   ├── database/                    # Data access & domain logic
+│   │   ├── domains/                 # Game-specific logic and rules
+│   │   ├── models/                  # SQLAlchemy models (ORM classes)
+│   │   ├── services/                # CRUD services (abstracted DB logic)
+│   │   └── __init__.py
+│   │
+│   ├── graphql/                     # GraphQL API implementation
+│   │   ├── inputs/                  # Input types for mutations
+│   │   ├── resolvers/              # Query and mutation resolvers
+│   │   ├── schemas/                # GraphQL schema definitions
+│   │   ├── graphql.py              # Root schema and router setup
+│   │   ├── permissions.py          # GraphQL permission classes
+│   │   └── scalars.py              # Custom scalar definitions
+│   │
+│   ├── seed/                        # Initial YAML seed data
+│   │   ├── bots.yaml
+│   │   ├── buildings.yaml
+│   │   ├── items.yaml
+│   │   └── structures.yaml
+│   │
+│   ├── workers/                    # Startup tasks (e.g., seeding)
+│   │   └── seed.py
+│   │
+│   ├── config.py                   # Environment configuration
+│   ├── main.py                     # FastAPI app entry point
+│   ├── game.db                     # SQLite database (for local use)
+│   └── __init__.py
+│
+├── tests/                          # Unit and integration tests
+│   ├── graphql/                    # GraphQL resolver tests
+│   │   ├── resolvers/             # Tests per resolver group
+│   │   └── __init__.py
+│   ├── conftest.py                 # Fixtures for pytest
+│   ├── test_filepath.py           # Path-related test utility
+│   ├── utils.py                    # Shared test utilities
+│   └── __init__.py
+│
+├── .gitignore                      # Files and folders to ignore in Git
+├── LICENSE                         # Project license
+├── README.MD                       # This file
+├── requirements.txt                # Project dependencies
+└── game.db                         # Local database file
 ```
 
 ---
@@ -105,7 +129,7 @@ Edit **`config.py`** or set environment variables as needed:
 
 Start the ASGI server with hot reload:  
 ```bash
-uvicorn main:app --reload
+server# uvicorn src.main:app --reload
 ```
 
 - **GraphiQL UI:**  http://127.0.0.1:8000/graphql  
@@ -181,16 +205,12 @@ postgresql+asyncpg://user:password@host:5432/your_db
 
 ## Testing
 
-_Coming soon_
-
-Testing will cover both unit and integration layers, including:
+Testing covers both unit and integration layers, including:
 
 - GraphQL resolver behavior
 - Database service logic
 - Permission enforcement
 - Seeder validation
-
-> 🔧 Stay tuned – test setup and example cases will be added.
 
 ---
 
@@ -198,7 +218,7 @@ Testing will cover both unit and integration layers, including:
 
 1. Fork the repo  
 2. Create a feature branch  
-3. Install & run tests just when they will be ready :) 
+3. Install & run tests
 4. Submit a pull request
 
 Please follow existing code style and add tests for new features.
@@ -207,5 +227,5 @@ Please follow existing code style and add tests for new features.
 
 ## License
 
-This project is licensed under the MIT License.  
+This project is licensed under the GPL-2.0 License.  
 See the LICENSE file for details.

@@ -1,15 +1,14 @@
 # server/tests/conftest.py
 from typing import AsyncGenerator
 import os
-import uuid
 
 import pytest_asyncio
 from httpx import AsyncClient
 from httpx import ASGITransport
 
-from server.main import app, lifespan
-from server.database import get_db
-from .utils import generate_unique_name
+from src.main import app, lifespan
+from src.database import get_db
+from tests.utils import generate_unique_name
 
 @pytest_asyncio.fixture(scope="module")
 async def test_client() -> AsyncGenerator[AsyncClient, None]:

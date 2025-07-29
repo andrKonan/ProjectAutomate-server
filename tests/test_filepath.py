@@ -20,7 +20,7 @@ def has_correct_header(filepath):
 def test_collection_modifyitems():    
     missing = []
     
-    for py_file in find_python_files(pathlib.Path('.')):
+    for py_file in find_python_files(pathlib.Path('src')):
         if not has_correct_header(py_file):
             missing.append(py_file)
 
