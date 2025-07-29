@@ -1,4 +1,3 @@
-# server/tests/graphql/resolvers/test_recipes.py
 import uuid
 import pytest
 

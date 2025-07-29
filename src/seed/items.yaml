@@ -1,4 +1,4 @@
-# server/src/seed/items.yaml
+# src/seed/items.yaml
 version: 1
 items:
   - name: "Wooden Log"

@@ -1,4 +1,4 @@
-# server/src/graphql/schemas/recipes.py
+# src/graphql/schemas/recipes.py
 from datetime import datetime
 
 import strawberry

@@ -1,1 +1,1 @@
-# server/src/database/domains/__init__.py
+# src/database/domains/__init__.py

@@ -1,4 +1,4 @@
-# server/src/database/services/structures.py
+# src/database/services/structures.py
 from typing import Sequence, Optional
 
 from fastapi import HTTPException

@@ -1,4 +1,4 @@
-# server/src/database/services/bots.py
+# src/database/services/bots.py
 from typing import Sequence, Optional
 
 from fastapi import HTTPException

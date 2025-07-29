@@ -1,4 +1,4 @@
-# server/src/graphql/schemas/structures.py
+# src/graphql/schemas/structures.py
 from datetime import datetime
 
 import strawberry

@@ -1,4 +1,4 @@
-# server/src/database/models/seed.py
+# src/database/models/seed.py
 from __future__ import annotations
 
 from sqlalchemy import String

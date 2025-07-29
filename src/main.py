@@ -1,4 +1,4 @@
-# server/src/main.py
+# src/main.py
 from pathlib import Path
 
 from contextlib import asynccontextmanager

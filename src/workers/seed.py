@@ -1,4 +1,4 @@
-# server/src/workers/seed.py
+# src/workers/seed.py
 from __future__ import annotations
 
 import pathlib

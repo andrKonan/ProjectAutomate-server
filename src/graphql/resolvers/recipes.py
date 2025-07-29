@@ -1,4 +1,4 @@
-# server/src/graphql/resolvers/recipes.py
+# src/graphql/resolvers/recipes.py
 from typing import Sequence
 from uuid import UUID
 

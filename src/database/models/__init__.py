@@ -1,4 +1,4 @@
-# server/src/database/models/__init__.py
+# src/database/models/__init__.py
 from .base import Base, BaseRepr
 from .clients import Client
 from .items import ItemType

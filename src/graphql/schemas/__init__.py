@@ -1,4 +1,4 @@
-# server/src/graphql/schemas/__init__.py
+# src/graphql/schemas/__init__.py
 from .clients import ClientScheme
 from .items import ItemTypeScheme
 from .structures import StructureTypeScheme

@@ -1,4 +1,4 @@
-# server/src/graphql/resolvers/__init__.py
+# src/graphql/resolvers/__init__.py
 import strawberry
 
 from .clients import ClientQuery, ClientMutation

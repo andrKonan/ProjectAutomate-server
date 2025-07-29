@@ -1,4 +1,4 @@
-# server/src/seed/structures.yaml
+# src/seed/structures.yaml
 version: 1
 structures:
   - name: "Tree"

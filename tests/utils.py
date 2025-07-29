@@ -1,4 +1,3 @@
-# server/tests/utils.py
 import uuid
 
 async def graphql_post(client, query, variables=None, headers=None):

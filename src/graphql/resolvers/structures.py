@@ -1,4 +1,4 @@
-# server/src/graphql/resolvers/structures.py
+# src/graphql/resolvers/structures.py
 from typing import Sequence
 from uuid import UUID
 

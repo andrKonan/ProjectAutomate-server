@@ -1,4 +1,4 @@
-# server/src/graphql/resolvers/clients.py
+# src/graphql/resolvers/clients.py
 from uuid import UUID
 
 import strawberry

@@ -1,4 +1,4 @@
-# server/src/database/services/recipes.py
+# src/database/services/recipes.py
 from typing import Sequence, Optional
 
 from fastapi import HTTPException

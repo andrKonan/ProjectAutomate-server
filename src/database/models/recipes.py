@@ -1,4 +1,4 @@
-# server/src/database/models/recipes.py
+# src/database/models/recipes.py
 from __future__ import annotations
 
 from uuid import UUID

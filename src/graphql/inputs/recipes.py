@@ -1,4 +1,4 @@
-# server/src/graphql/inputs/recipes.py
+# src/graphql/inputs/recipes.py
 import strawberry
 
 from src.graphql.scalars import UUID

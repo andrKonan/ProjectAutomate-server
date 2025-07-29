@@ -1,4 +1,4 @@
-# server/src/database/models/items.py
+# src/database/models/items.py
 from __future__ import annotations
 
 from sqlalchemy import Integer, String

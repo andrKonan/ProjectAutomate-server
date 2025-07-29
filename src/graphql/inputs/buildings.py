@@ -1,4 +1,4 @@
-# server/src/graphql/inputs/buildings.py
+# src/graphql/inputs/buildings.py
 import strawberry
 
 from src.graphql.scalars import UUID

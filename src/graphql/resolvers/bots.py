@@ -1,4 +1,4 @@
-# server/src/graphql/resolvers/bots.py
+# src/graphql/resolvers/bots.py
 from typing import Sequence
 from uuid import UUID
 

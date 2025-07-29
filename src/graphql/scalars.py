@@ -1,4 +1,4 @@
-# server/src/graphql/scalars.py
+# src/graphql/scalars.py
 import uuid
 from typing import Annotated
 

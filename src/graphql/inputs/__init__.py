@@ -1,4 +1,4 @@
-# server/src/graphql/inputs/__init__.py
+# src/graphql/inputs/__init__.py
 from .clients import ClientCreateInput, ClientUpdateInput
 from .items import ItemTypeInput
 from .structures import StructureTypeInput

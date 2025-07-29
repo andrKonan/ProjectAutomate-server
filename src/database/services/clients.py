@@ -1,4 +1,4 @@
-# server/src/database/services/clients.py
+# src/database/services/clients.py
 import secrets
 from typing import Sequence, Optional
 

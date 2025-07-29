@@ -1,4 +1,4 @@
-# server/src/database/services/buildings.py
+# src/database/services/buildings.py
 from typing import Sequence, Optional
 
 from fastapi import HTTPException

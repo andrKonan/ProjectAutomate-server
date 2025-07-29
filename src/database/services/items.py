@@ -1,4 +1,4 @@
-# server/src/database/services/items.py
+# src/database/services/items.py
 from typing import Sequence, Optional
 
 from fastapi import HTTPException

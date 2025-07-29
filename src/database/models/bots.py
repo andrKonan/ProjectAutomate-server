@@ -1,4 +1,4 @@
-# server/src/database/models/bots.py
+# src/database/models/bots.py
 from __future__ import annotations
 
 from uuid import UUID
